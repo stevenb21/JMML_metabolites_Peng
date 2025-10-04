@@ -6,9 +6,10 @@ library(ggrepel)
 
 # ==== Load data ===============================================================
 
-source("03_QLIC_imputation.R")
+#source("03_QLIC_imputation.R")
+#assumes the objects in 03_QLIC are in the environment
 
-final_results <- read_xlsx("../data/final_results_global_fdr.xlsx")
+final_results <- read_xlsx("../res/annotated/final_results_global_fdr.xlsx")
 
 
 # ==== ZHP Visualizations ======================================================
@@ -62,7 +63,7 @@ fish_p_ZHP_fdr <- ggplot(fish_plot_ZHP_fdr, aes(x = log2_OR, y = neglog10_fdr)) 
 
 print(fish_p_ZHP_fdr)
 
-ggsave(filename = "../results/fisher_volcano_ZHP_FDR.png", plot = fish_p_ZHP_fdr)
+ggsave(filename = "../res/annotated/fisher_volcano_ZHP_FDR.png", plot = fish_p_ZHP_fdr)
 
 
 
@@ -119,7 +120,7 @@ ZHP_ttest_volcano_FDR <- ggplot(
 print(ZHP_ttest_volcano_FDR)
 
 # Save volcano plot
-ggsave("../results/ZHP_ttest_volcano_FDR.png",
+ggsave("../res/annotated/ZHP_ttest_volcano_FDR.png",
        ZHP_ttest_volcano_FDR, width = 10, height = 6, dpi = 300)
 
 
@@ -159,7 +160,7 @@ p_violin_ZHP
 
 # Save violin plot
 ggsave(
-  filename = "../results/ZHP_top5_ttest.png",
+  filename = "../res/annotated/ZHP_top5_ttest.png",
   plot = p_violin_ZHP,
   width = 10, height = 6, units = "in", dpi = 300
 )
@@ -218,7 +219,7 @@ fish_p_ZHP <- ggplot(fish_plot_ZHP_p,  aes(x = log2_OR, y = neglog10_p)) +
 
 print(fish_p_ZHP)
 
-ggsave(filename = "../results/fisher_volcano_ZHP_pval.png", plot = fish_p_ZHP)
+ggsave(filename = "../res/annotated/fisher_volcano_ZHP_pval.png", plot = fish_p_ZHP)
 
 
 
@@ -269,7 +270,7 @@ ZHP_ttest_volcano_pval <- ggplot(
 print(ZHP_ttest_volcano_pval)
 
 # Save volcano plot
-ggsave("../results/ZHP_ttest_volcano_pval.png",
+ggsave("../res/annotated/ZHP_ttest_volcano_pval.png",
        ZHP_ttest_volcano_pval, width = 10, height = 6, dpi = 300)
 
 
@@ -327,7 +328,7 @@ fish_p_RPNPF_fdr <- ggplot(fish_plot_RPNPF_fdr, aes(x = log2_OR, y = neglog10_fd
 
 print(fish_p_RPNPF_fdr)
 
-ggsave(filename = "../results/fisher_volcano_RPNPF_FDR.png", plot = fish_p_RPNPF_fdr)
+ggsave(filename = "../res/annotated/fisher_volcano_RPNPF_FDR.png", plot = fish_p_RPNPF_fdr)
 
 # ==== RPNPF - TTest Visualizations FDR ==========================================
 
@@ -382,7 +383,7 @@ RPNPF_ttest_volcano_FDR <- ggplot(
 print(RPNPF_ttest_volcano_FDR)
 
 # Save volcano plot
-ggsave("../results/RPNPF_ttest_volcano_FDR.png",
+ggsave("../res/annotated/RPNPF_ttest_volcano_FDR.png",
        RPNPF_ttest_volcano_FDR, width = 10, height = 6, dpi = 300)
 
 # ==== Top 5 Violin Plots of Most Significant Sex Differences ====
@@ -419,7 +420,7 @@ p_violin_RPNPF
 
 # Save violin plot
 ggsave(
-  filename = "../results/RPNPF_top5_ttest.png",
+  filename = "../res/annotated/RPNPF_top5_ttest.png",
   plot = p_violin_RPNPF,
   width = 10, height = 6, units = "in", dpi = 300
 )
@@ -478,7 +479,7 @@ fish_p_RPNPF <- ggplot(fish_plot_RPNPF_p,  aes(x = log2_OR, y = neglog10_p)) +
 
 print(fish_p_RPNPF)
 
-ggsave(filename = "../results/fisher_volcano_RPNPF_pval.png", plot = fish_p_RPNPF)
+ggsave(filename = "../res/annotated/fisher_volcano_RPNPF_pval.png", plot = fish_p_RPNPF)
 
 
 
@@ -529,7 +530,7 @@ RPNPF_ttest_volcano_pval <- ggplot(
 print(RPNPF_ttest_volcano_pval)
 
 # Save volcano plot
-ggsave("../results/RPNPF_ttest_volcano_pval.png",
+ggsave("../res/annotated/RPNPF_ttest_volcano_pval.png",
        RPNPF_ttest_volcano_pval, width = 10, height = 6, dpi = 300)
 
 
@@ -542,7 +543,7 @@ ggsave("../results/RPNPF_ttest_volcano_pval.png",
 t_res <- final_results %>% filter(test_type == "TTest") %>% filter(global_fdr < .05)
 
 
-ZHP_transformed <- readRDS("../data/ZHP_imputed.rds") 
+ZHP_transformed <- readRDS("../data/R_objects/ZHP_imputed.rds") 
 
 
 
@@ -571,7 +572,7 @@ ttest_sig <- ggplot(ZHP_transformed %>% filter(compound_name == "2-hydroxychryse
 
 
 
-ggsave(filename = "../results/ttest_violin.png", plot = ttest_sig)
+ggsave(filename = "../res/annotated/ttest_violin_2-hydroxychrysene.png", plot = ttest_sig)
 
 
 # ==== Viz violin sig hit Fisher ===========================================
@@ -583,12 +584,12 @@ fish_res_top <- final_results %>%
 
 
 # Load the non-imputed intensities (M2) 
-ZHP_filtered_fish <- readRDS("../data/ZHP_annotated_filtered.rds") %>% 
+ZHP_filtered_fish <- readRDS("../data/R_objects/ZHP_annotated_filtered.rds") %>% 
   filter(sample_group %in% c("JMML", "Control")) %>% 
   filter(compound_name %in% fish_res_top) %>% 
   mutate(intensity_log2 = log2(intensity + 1))
 
-writexl::write_xlsx(ZHP_filtered_fish, path = "Fisher_FDR_hits.xlsx")
+writexl::write_xlsx(ZHP_filtered_fish, path = "../res/annotated/Fisher_FDR_hits.xlsx")
 
 fish_res_violin_ZHP <- ggplot(
   ZHP_filtered_fish,
@@ -615,7 +616,7 @@ fish_res_violin_ZHP
 
 # Save violin plot
 ggsave(
-  filename = "../results/ZHP_top4violin_fish_res.png",
+  filename = "../res/annotated/ZHP_top4violin_fish_res.png",
   plot = fish_res_violin_ZHP,
   width = 10, height = 6, units = "in", dpi = 300
 )
@@ -671,6 +672,6 @@ fish_p_ZHP_fdr_pub <- ggplot(fish_plot_ZHP_fdr, aes(x = log2_OR, y = neglog10_fd
   )
 
 
-print(fish_p_ZHP_fdr_pub)
+#print(fish_p_ZHP_fdr_pub)
 
-ggsave(filename = "../results/fisher_volcano_ZHP_FDR_pub.png", plot = fish_p_ZHP_fdr_pub)
+ggsave(filename = "../res/annotated/fisher_volcano_ZHP_FDR_pub.png", plot = fish_p_ZHP_fdr_pub)

@@ -3,7 +3,12 @@ library(ggrepel)
 
 
 source("05a_Sex_analysis.R")
-#combined_results <- readxl::read_xlsx("../results/sex_analysis.xlsx")
+#Make sure you run the above line if you are debugging!
+
+combined_results <- readxl::read_xlsx("../res/annotated/sex/sex_analysis.xlsx")
+
+# -------------------------------------------------------------------------
+
 
 #Flip effect size of fisher to match the T-Test effect direction. 
 # set it to: (log(OR) female positive)
@@ -76,7 +81,7 @@ p_sex_volcano_Combined_ZHP <- ggplot(
 p_sex_volcano_Combined_ZHP
 
 # Save volcano plot
-ggsave("../results/sex/ZHP_Combined_ttest_volcano.png",
+ggsave("../res/annotated/sex/ZHP_Combined_ttest_volcano.png",
        p_sex_volcano_Combined_ZHP, width = 10, height = 6, dpi = 300)
 
 # ==== Top 5 Violin Plots of Most Significant Sex Differences ====
@@ -111,7 +116,7 @@ p_violin_ZHP_Combined
 
 # Save violin plot
 ggsave(
-  filename = "../results/sex/ZHP_Combined_top5_sex_ttest.png",
+  filename = "../res/annotated/sex/ZHP_Combined_top5_sex_ttest.png",
   plot = p_violin_ZHP_Combined,
   width = 10, height = 6, units = "in", dpi = 300
 )
@@ -180,7 +185,7 @@ fish_p_ZHP_sex_Combined_JMML_Control
 
 
 
-ggsave(filename = "../results/sex/ZHP_Combined_fisher_volcano_sex.png",
+ggsave(filename = "../res/annotated/sex/ZHP_Combined_fisher_volcano_sex.png",
        plot = fish_p_ZHP_sex_Combined_JMML_Control, width = 10)
 
 
@@ -243,7 +248,7 @@ p_sex_volcano_Control_ZHP <- ggplot(
 p_sex_volcano_Control_ZHP
 
 # Save volcano plot
-ggsave("../results/sex/ZHP_Control_ttest_volcano.png",
+ggsave("../res/annotated/sex/ZHP_Control_ttest_volcano.png",
        p_sex_volcano_Control_ZHP, width = 8, height = 6, dpi = 300)
 
 # ==== Top 5 Violin Plots of Most Significant Sex Differences ====
@@ -278,7 +283,7 @@ p_violin_ZHP_Control
 
 # Save violin plot
 ggsave(
-  filename = "../results/sex/ZHP_Control_top5_sex_ttest.png",
+  filename = "../res/annotated/sex/ZHP_Control_top5_sex_ttest.png",
   plot = p_violin_ZHP_Control,
   width = 10, height = 6, units = "in", dpi = 300
 )
@@ -347,7 +352,7 @@ fish_p_ZHP_sex_Control
 
 
 
-ggsave(filename = "../results/sex/ZHP_Control_fisher_volcano_sex.png",
+ggsave(filename = "../res/annotated/sex/ZHP_Control_fisher_volcano_sex.png",
        plot = fish_p_ZHP_sex_Control, width = 10)
 
 # ==== ZHP - JMML ===========================================================
@@ -408,7 +413,7 @@ p_sex_volcano_JMML_ZHP <- ggplot(
 p_sex_volcano_JMML_ZHP
 
 # Save volcano plot
-ggsave("../results/sex/ZHP_JMML_ttest_volcano.png",
+ggsave("../res/annotated/sex/ZHP_JMML_ttest_volcano.png",
        p_sex_volcano_JMML_ZHP, width = 8, height = 6, dpi = 300)
 
 # ==== Top 5 Violin Plots of Most Significant Sex Differences ====
@@ -443,7 +448,7 @@ p_violin_ZHP_JMML
 
 # Save violin plot
 ggsave(
-  filename = "../results/sex/ZHP_JMML_top5_sex_ttest.png",
+  filename = "../res/annotated/sex/ZHP_JMML_top5_sex_ttest.png",
   plot = p_violin_ZHP_JMML,
   width = 10, height = 6, units = "in", dpi = 300
 )
@@ -512,7 +517,7 @@ fish_p_ZHP_sex_JMML
 
 
 
-ggsave(filename = "../results/sex/ZHP_JMML_fisher_volcano_sex.png",
+ggsave(filename = "../res/annotated/sex/ZHP_JMML_fisher_volcano_sex.png",
        plot = fish_p_ZHP_sex_JMML, width = 10)
 
 # ==== RPNPF  data  ==============================================================
@@ -521,7 +526,7 @@ ggsave(filename = "../results/sex/ZHP_JMML_fisher_volcano_sex.png",
 ttest_Combined_RPNPF <- combined_results_RPNPF %>% 
   filter(test_type == "TTest", cohort == "Combined_JMML_Control")
 
-fish_Combined_RPNPF <- combined_results_RPNPF %>%
+fish_Combined_RPNPF <- combined_results_RPNPF |> 
   filter(cohort == "Combined_JMML_Control") %>% 
   filter(test_type == "Fisher")
 
@@ -572,7 +577,7 @@ p_sex_volcano_Combined_RPNPF <- ggplot(
 p_sex_volcano_Combined_RPNPF
 
 # Save volcano plot
-ggsave("../results/sex/RPNPF_Combined_ttest_volcano.png",
+ggsave("../res/annotated/sex/RPNPF_Combined_ttest_volcano.png",
        p_sex_volcano_Combined_RPNPF, width = 10, height = 6, dpi = 300)
 
 # ==== Top 5 Violin Plots of Most Significant Sex Differences ====
@@ -607,7 +612,7 @@ p_violin_RPNPF_Combined
 
 # Save violin plot
 ggsave(
-  filename = "../results/sex/RPNPF_Combined_top5_sex_ttest.png",
+  filename = "../res/annotated/sex/RPNPF_Combined_top5_sex_ttest.png",
   plot = p_violin_RPNPF_Combined,
   width = 10, height = 6, units = "in", dpi = 300
 )
@@ -676,7 +681,7 @@ fish_p_RPNPF_sex_Combined_JMML_Control
 
 
 
-ggsave(filename = "../results/sex/RPNPF_Combined_fisher_volcano_sex.png",
+ggsave(filename = "../res/annotated/sex/RPNPF_Combined_fisher_volcano_sex.png",
        plot = fish_p_RPNPF_sex_Combined_JMML_Control, width = 10)
 
 
@@ -739,7 +744,7 @@ p_sex_volcano_Control_RPNPF <- ggplot(
 p_sex_volcano_Control_RPNPF
 
 # Save volcano plot
-ggsave("../results/sex/RPNPF_Control_ttest_volcano.png",
+ggsave("../res/annotated/sex/RPNPF_Control_ttest_volcano.png",
        p_sex_volcano_Control_RPNPF, width = 8, height = 6, dpi = 300)
 
 # ==== Top 5 Violin Plots of Most Significant Sex Differences ====
@@ -774,7 +779,7 @@ p_violin_RPNPF_Control
 
 # Save violin plot
 ggsave(
-  filename = "../results/sex/RPNPF_Control_top5_sex_ttest.png",
+  filename = "../res/annotated/sex/RPNPF_Control_top5_sex_ttest.png",
   plot = p_violin_RPNPF_Control,
   width = 10, height = 6, units = "in", dpi = 300
 )
@@ -843,7 +848,7 @@ fish_p_RPNPF_sex_Control
 
 
 
-ggsave(filename = "../results/sex/RPNPF_Control_fisher_volcano_sex.png",
+ggsave(filename = "../res/annotated/sex/RPNPF_Control_fisher_volcano_sex.png",
        plot = fish_p_RPNPF_sex_Control, width = 10)
 
 # ==== RPNPF - JMML ===========================================================
@@ -904,7 +909,7 @@ p_sex_volcano_JMML_RPNPF <- ggplot(
 p_sex_volcano_JMML_RPNPF
 
 # Save volcano plot
-ggsave("../results/sex/RPNPF_JMML_ttest_volcano.png",
+ggsave("../res/annotated/sex/RPNPF_JMML_ttest_volcano.png",
        p_sex_volcano_JMML_RPNPF, width = 8, height = 6, dpi = 300)
 
 # ==== Top 5 Violin Plots of Most Significant Sex Differences ====
@@ -939,7 +944,7 @@ p_violin_RPNPF_JMML
 
 # Save violin plot
 ggsave(
-  filename = "../results/sex/RPNPF_JMML_top5_sex_ttest.png",
+  filename = "../res/annotated/sex/RPNPF_JMML_top5_sex_ttest.png",
   plot = p_violin_RPNPF_JMML,
   width = 10, height = 6, units = "in", dpi = 300
 )
@@ -1008,6 +1013,6 @@ fish_p_RPNPF_sex_JMML
 
 
 
-ggsave(filename = "../results/sex/RPNPF_JMML_fisher_volcano_sex.png",
+ggsave(filename = "../res/annotated/sex/RPNPF_JMML_fisher_volcano_sex.png",
        plot = fish_p_RPNPF_sex_JMML, width = 10)
 

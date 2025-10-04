@@ -3,6 +3,8 @@ library(tidyverse)  # Core data manipulation and visualization
 library(readxl)     # For reading Excel files
 library(ggrepel)    # For non-overlapping text labels in ggplot2
 
+if (!dir.exists("../res/annotated/sex")) dir.create("../res/annotated/sex", recursive = TRUE)
+
 # ==== Load Data ====
 
 # Load sample metadata and standardize sample ID format
@@ -25,7 +27,7 @@ sample_info <- bind_rows(sample_info, control_info)
 # ==== ZHP Analysis ====
 
 # Not-imputed dataset
-ZHP_filtered <- readRDS("../data/ZHP_annotated_filtered.rds") %>% 
+ZHP_filtered <- readRDS("../data/R_objects/ZHP_annotated_filtered.rds") %>% 
   filter(sample_group %in% c("JMML", "Control"))
 
 # Join sex into the filtered ZHP data
@@ -34,7 +36,7 @@ ZHP_filtered <- ZHP_filtered %>%
   left_join(sample_info %>% select(sampleid, sex), by = "sampleid")
 
 # Load long-format imputed ZHP data (M2, missing < 20%)
-ZHP_imp_long <- readRDS("../data/ZHP_imputed.rds")
+ZHP_imp_long <- readRDS("../data/R_objects/ZHP_imputed.rds")
 
 ZHP_imp_long <- ZHP_imp_long %>%
   mutate(sampleid = tolower(SampleID)) %>%
@@ -348,7 +350,7 @@ ttest_results_sex_JMML_ZHP <- ZHP_imp_long_JMML_ZHP %>%
 # ==== RPNPF Analysis ====
 
 # Not-imputed dataset
-RPNPF_filtered <- readRDS("../data/RPNPF_annotated_filtered.rds") %>% 
+RPNPF_filtered <- readRDS("../data/R_objects/RPNPF_annotated_filtered.rds") %>% 
   filter(sample_group %in% c("JMML", "Control"))
 
 # Join sex into the filtered RPNPF data
@@ -357,7 +359,7 @@ RPNPF_filtered <- RPNPF_filtered %>%
   left_join(sample_info %>% select(sampleid, sex), by = "sampleid")
 
 # Load long-format imputed RPNPF data (M2, missing < 20%)
-RPNPF_imp_long <- readRDS("../data/RPNPF_imputed.rds")
+RPNPF_imp_long <- readRDS("../data/R_objects/RPNPF_imputed.rds")
 
 RPNPF_imp_long <- RPNPF_imp_long %>%
   mutate(sampleid = tolower(SampleID)) %>%
@@ -765,7 +767,7 @@ combined_results <- combined_results %>%
 
 
 # ==== Save to results to file =================================================
-writexl::write_xlsx(combined_results, "../results/sex_analysis.xlsx")
+writexl::write_xlsx(combined_results, "../res/annotated/sex/sex_analysis.xlsx")
 
 
 

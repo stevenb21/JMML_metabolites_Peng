@@ -3,7 +3,7 @@ library(ggrepel)
 
 
 source("06a_Somatic_analysis.R")
-#combined_results <- readxl::read_xlsx("../results/somatic_analysis.xlsx")
+combined_results <- readxl::read_xlsx("../res/annotated/somatic/somatic_analysis.xlsx")
 
 
 
@@ -68,7 +68,7 @@ p_sex_volcano_Combined_ZHP <- ggplot(
 p_sex_volcano_Combined_ZHP
 
 # Save volcano plot
-ggsave("../results/somatic/ZHP_Combined_ttest_volcano.png",
+ggsave("../res/annotated/somatic/ZHP_Combined_ttest_volcano.png",
        p_sex_volcano_Combined_ZHP, width = 10, height = 6, dpi = 300)
 
 # ==== Top 5 Violin Plots of Most Significant Sex Differences ====
@@ -103,7 +103,7 @@ p_violin_ZHP_Combined
 
 # Save violin plot
 ggsave(
-  filename = "../results/somatic/ZHP_Combined_top5_somatic_ttest.png",
+  filename = "../res/annotated/somatic/ZHP_Combined_top5_somatic_ttest.png",
   plot = p_violin_ZHP_Combined,
   width = 10, height = 6, units = "in", dpi = 300
 )
@@ -173,7 +173,7 @@ fish_p_ZHP_somatic_Combined_JMML_Control
 
 
 
-ggsave(filename = "../results/somatic/ZHP_Combined_fisher_volcano_somatic.png",
+ggsave(filename = "../res/annotated/somatic/ZHP_Combined_fisher_volcano_somatic.png",
        plot = fish_p_ZHP_somatic_Combined_JMML_Control, width = 10)
 
 
@@ -235,7 +235,7 @@ p_sex_volcano_Combined_RPNPF <- ggplot(
 p_sex_volcano_Combined_RPNPF
 
 # Save volcano plot
-ggsave("../results/somatic/RPNPF_Combined_ttest_volcano.png",
+ggsave("../res/annotated/somatic/RPNPF_Combined_ttest_volcano.png",
        p_sex_volcano_Combined_RPNPF, width = 10, height = 6, dpi = 300)
 
 # ==== Top 5 Violin Plots of Most Significant Sex Differences ====
@@ -270,7 +270,7 @@ p_violin_RPNPF_Combined
 
 # Save violin plot
 ggsave(
-  filename = "../results/somatic/RPNPF_Combined_top5_somatic_ttest.png",
+  filename = "../res/annotated/somatic/RPNPF_Combined_top5_somatic_ttest.png",
   plot = p_violin_RPNPF_Combined,
   width = 10, height = 6, units = "in", dpi = 300
 )
@@ -340,5 +340,5 @@ fish_p_RPNPF_somatic_Combined_JMML_Control
 
 
 
-ggsave(filename = "../results/somatic/RPNPF_Combined_fisher_volcano_somatic.png",
+ggsave(filename = "../res/annotated/somatic/RPNPF_Combined_fisher_volcano_somatic.png",
        plot = fish_p_RPNPF_somatic_Combined_JMML_Control, width = 10)

@@ -23,8 +23,8 @@ library(writexl)
 
 # ==== Load data ===============================================================
 
-ZHP <- readRDS(file = "../data/ZHP_annotated_filtered.rds")
-RPNPF <- readRDS(file = "../data/RPNPF_annotated_filtered.rds")
+ZHP <- readRDS(file = "../data/R_objects/ZHP_annotated_filtered.rds")
+RPNPF <- readRDS(file = "../data/R_objects/RPNPF_annotated_filtered.rds")
 
 # ==== Process ZHP =============================================================
 
@@ -243,9 +243,12 @@ p_before_ZHP <- ggplot(pca_scores_unimp, aes(PC1, PC2, color = sample_group)) +
 
 print(p_before_ZHP)
 
+
+if (!dir.exists("../res/annotated/QC")) dir.create("../res/annotated/QC", recursive = TRUE)
+
 # 5. Save plot to PNG
 ggsave(
-  filename = "../results/QC/PCA_boxcox_before_imputation_ZHP.png",
+  filename = "../res/annotated/QC/PCA_boxcox_before_imputation_ZHP.png",
   plot     = p_before_ZHP,
   width    = 6,
   height   = 5,
@@ -305,7 +308,7 @@ print(p_after_ZHP)
 
 # 5. Save plot to PNG
 ggsave(
-  filename = "../results/QC/PCA_boxcox_after_imputation_ZHP.png",
+  filename = "../res/annotated/QC/PCA_boxcox_after_imputation_ZHP.png",
   plot     = p_after_ZHP,
   width    = 6,
   height   = 5,
@@ -533,7 +536,7 @@ print(p_before_RPNPF)
 
 # 5. Save plot to PNG
 ggsave(
-  filename = "../results/QC/PCA_boxcox_before_imputation_RPNPF.png",
+  filename = "../res/annotated/QC/PCA_boxcox_before_imputation_RPNPF.png",
   plot     = p_before_RPNPF,
   width    = 6,
   height   = 5,
@@ -593,7 +596,7 @@ print(p_after_RPNPF)
 
 # 5. Save plot to PNG
 ggsave(
-  filename = "../results/QC/PCA_boxcox_after_imputation_RPNPF.png",
+  filename = "../res/annotated/QC/PCA_boxcox_after_imputation_RPNPF.png",
   plot     = p_after_RPNPF,
   width    = 6,
   height   = 5,
@@ -652,8 +655,8 @@ combined_results <- combined_results %>%
 
 print(combined_results %>% filter(global_fdr < .05))
 
-write_xlsx(combined_results, "../data/final_results_global_fdr.xlsx")
+write_xlsx(combined_results, "../res/annotated/final_results_global_fdr.xlsx")
 
-saveRDS(ZHP_transformed, "../data/ZHP_imputed.rds")
-saveRDS(RPNPF_transformed, "../data/RPNPF_imputed.rds")
+saveRDS(ZHP_transformed, "../data/R_objects/ZHP_imputed.rds")
+saveRDS(RPNPF_transformed, "../data/R_objects/RPNPF_imputed.rds")
 

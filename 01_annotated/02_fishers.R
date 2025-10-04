@@ -13,7 +13,7 @@ run_fisher <- function(data,
                        dataset_name,
                        min_miss = 0.20,
                        max_miss = 0.65,
-                       out_path = "../results") {
+                       out_path = "../res/annotated") {
   
   message("» Running Fisher tests for ", dataset_name)
   
@@ -86,8 +86,8 @@ run_fisher <- function(data,
 }
 
 # ---- Load data ---------------------------------------------------------------
-ZHP   <- readRDS("../data/ZHP_annotated_filtered.rds")
-RPNPF <- readRDS("../data/RPNPF_annotated_filtered.rds")
+ZHP   <- readRDS("../data/R_objects/ZHP_annotated_filtered.rds")
+RPNPF <- readRDS("../data/R_objects/RPNPF_annotated_filtered.rds")
 
 # ---- Run ---------------------------------------------------------------------
 fisher_results_ZHP   <- run_fisher(ZHP,   "ZHP")

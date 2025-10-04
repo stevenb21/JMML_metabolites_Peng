@@ -4,6 +4,8 @@ library(readxl)     # For reading Excel files
 library(ggrepel)    # For non-overlapping text labels in ggplot2
 library(janitor)
 
+if (!dir.exists("../res/annotated/somatic")) dir.create("../res/annotated/somatic", recursive = TRUE)
+
 # ====  Load and clean genomics metadata ==== 
 genomics <- read_excel("../data/JMML_DBS_Genomics.xlsx") %>%
   clean_names() %>% #View()
@@ -29,11 +31,11 @@ genomics <- read_excel("../data/JMML_DBS_Genomics.xlsx") %>%
 # ==== ZHP Analysis ====
 
 # Not-imputed dataset
-ZHP_filtered <- readRDS("../data/ZHP_annotated_filtered.rds") %>% 
+ZHP_filtered <- readRDS("../data/R_objects/ZHP_annotated_filtered.rds") %>% 
   filter(sample_group %in% c("JMML", "Control"))
 
 # Load long-format imputed ZHP data (M2, missing < 20%)
-ZHP_imp_long <- readRDS("../data/ZHP_imputed.rds") %>% 
+ZHP_imp_long <- readRDS("../data/R_objects/ZHP_imputed.rds") %>% 
   filter(sample_group %in% c("JMML"))
 
 ZHP_imp_long <- ZHP_imp_long %>%
@@ -169,7 +171,7 @@ ttest_results_somatic_full_ZHP <- ZHP_imp_long %>%
 # ==== RPNPF Analysis ====
 
 # Not-imputed dataset
-RPNPF_filtered <- readRDS("../data/RPNPF_annotated_filtered.rds") %>% 
+RPNPF_filtered <- readRDS("../data/R_objects/RPNPF_annotated_filtered.rds") %>% 
   filter(sample_group %in% c("JMML"))
 
 # Join sex into the filtered RPNPF data
@@ -180,7 +182,7 @@ RPNPF_filtered <- RPNPF_filtered %>%
   filter(somatic_present %in% c("Somatic_Neg", "Somatic_Pos"))
 
 # Load long-format imputed RPNPF data (M2, missing < 20%)
-RPNPF_imp_long <- readRDS("../data/RPNPF_imputed.rds") %>% 
+RPNPF_imp_long <- readRDS("../data/R_objects/RPNPF_imputed.rds") %>% 
   filter(sample_group %in% c("JMML"))
 
 RPNPF_imp_long <- RPNPF_imp_long %>%
@@ -338,4 +340,4 @@ combined_results <- combined_results %>%
          analysis = "Somatic")
 
 # # ==== Save to results to file =================================================
-writexl::write_xlsx(combined_results, "../results/somatic_analysis.xlsx")
+writexl::write_xlsx(combined_results, "../res/annotated/somatic/somatic_analysis.xlsx")

@@ -11,6 +11,9 @@ library(tidyverse)
 library(readxl)
 library(purrr)
 
+if (!dir.exists("../res/annotated")) dir.create("../res/annotated", recursive = TRUE)
+if (!dir.exists("../data/R_objects")) dir.create("../res/R_objects", recursive = TRUE)
+
 
 # ==== Load data ===============================================================
 
@@ -158,7 +161,7 @@ p_hist_rho_ZHP <- ggplot(spearman_hgb_cor_ZHP, aes(x = rho)) +
 
 # Save the histogram
 ggsave(
-  filename = "../results/histogram_rho_ZHP.png",
+  filename = "../res/annotated/histogram_rho_ZHP.png",
   plot = p_hist_rho_ZHP,
   width = 7,
   height = 5,
@@ -380,7 +383,7 @@ p_hist_rho_RPNPF <- ggplot(spearman_hgb_cor_RPNPF, aes(x = rho)) +
 
 # Save the histogram
 ggsave(
-  filename = "../results/histogram_rho_RPNPF.png",
+  filename = "../res/annotated/histogram_rho_RPNPF.png",
   plot = p_hist_rho_RPNPF,
   width = 7,
   height = 5,
@@ -512,7 +515,7 @@ cv_decision <- cv_combined_shared %>%
   slice_min(cv_max, with_ties = FALSE) %>%
   ungroup()
 
-writexl::write_xlsx(cv_decision, "../results/cv_compare_selected.xlsx")
+writexl::write_xlsx(cv_decision, "../res/annotated/cv_compare_selected.xlsx")
 
 # Get compounds assigned to ZHP (to remove from RPNPF)
 keep_ZHP <- cv_decision %>%
@@ -543,13 +546,13 @@ spearman_hgb_cor_ZHP <- spearman_hgb_cor_ZHP %>%
 
 combined_hgb_cor <- bind_rows(spearman_hgb_cor_ZHP, spearman_hgb_cor_RPNPF)
 
-writexl::write_xlsx(combined_hgb_cor, "../results/hemoglobin_correlated_metabolites.xlsx")
+writexl::write_xlsx(combined_hgb_cor, "../res/annotated/hemoglobin_correlated_metabolites.xlsx")
 
 
 
 # ==== Save data  ==============================================================
-saveRDS(ZHP_filtered_nodup, file = "../data/ZHP_annotated_filtered.rds")
-saveRDS(RPNPF_filtered_nodup, file = "../data/RPNPF_annotated_filtered.rds")
+saveRDS(ZHP_filtered_nodup, file = "../data/R_objects/ZHP_annotated_filtered.rds")
+saveRDS(RPNPF_filtered_nodup, file = "../data/R_objects/RPNPF_annotated_filtered.rds")
 
 
 filter_summary <- ZHP_filter_summary %>%
@@ -567,7 +570,7 @@ filter_summary <- bind_rows(
   )
 )
 
-writexl::write_xlsx(filter_summary, "../results/filter_summary.xlsx")
+writexl::write_xlsx(filter_summary, "../res/annotated/filter_summary.xlsx")
 print(filter_summary)
 
 
