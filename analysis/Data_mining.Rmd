@@ -1,0 +1,410 @@
+---
+title: "Annotated JMML Metabolomics | Classification Data Mining"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 3
+    number_sections: true
+    theme: flatly       
+    highlight: tango         
+    df_print: paged           
+    fig_caption: true         
+    self_contained: true      
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+```{r, include = FALSE, warning = FALSE}
+library(tidyverse)
+library(knitr)
+library(kableExtra)
+library(glue)
+```
+
+```{r, include = FALSE, echo = FALSE}
+source("dm_01_load_data.R")
+source("dm_02_EDA.R")
+```
+
+
+# Overview
+
+Goal: Classify a DBS card as JMML positive or negative.
+
+We are working with a matrix of 116 samples (rows), and the columns consist of three types of features:
+
+
+
+* **Box-Cox transformed intensities** (`bc_` prefix) for metabolites with less than 20% missing data, imputed using quantile regression imputation of left-censored data (QRLIC) prior to Box-Cox transformation.
+* **Binary detection indicators** (`bin_` prefix) for metabolites with 20%–65% missingness, indicating presence or absence.
+* **Sample metadata** (`meta_` prefix), including variables such as sex, race/ethnicity, and hemoglobin level.
+
+# Exploratory Data Analysis
+
+
+The metadata columns we utilize are sex, race/ethnicity, and hemoglobin level. 
+
+```{r, include = FALSE, echo = FALSE}
+meta_look <- readRDS(file = "../datamine_results/full_combined_matrix.rds")
+
+
+meta_look <- meta_look %>%
+  select(matches("^meta_")) %>% 
+  select(-c(meta_bd_blood_collection_time_x, meta_SampleID))
+```
+
+
+```{r}
+# Make sure meta_sample_group is a factor with consistent levels
+meta_look <- meta_look %>%
+  mutate(across(c(meta_sample_group, meta_sex), ~ as.factor(.)))
+
+# Build 2D contingency table
+sex_tab <- table(Sex = meta_look$meta_sex, Group = meta_look$meta_sample_group)
+
+# Convert to data frame and pivot wider
+sex_df <- as.data.frame(sex_tab) %>%
+  pivot_wider(names_from = Group, values_from = Freq, values_fill = 0)
+
+# Add row totals
+sex_df <- sex_df %>%
+  mutate(Total = rowSums(across(where(is.numeric))))
+
+# Output formatted table
+knitr::kable(sex_df, caption = "Sex breakdown by sample group")  %>% 
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE, position = "center") %>%
+  column_spec(2:ncol(sex_df), width = "4em")
+```
+
+```{r}
+# Ensure proper factor handling
+race_table <- race_table %>%
+  mutate(across(c(meta_sample_group, meta_race_ethnicity), ~ as.factor(.)))
+
+# Create 2D contingency table
+race_tab <- table(RaceEthnicity = race_table$meta_race_ethnicity, Group = race_table$meta_sample_group)
+
+# Convert to tidy format
+race_df <- as.data.frame(race_tab) %>%
+  pivot_wider(names_from = Group, values_from = Freq, values_fill = 0)
+
+# Add row totals
+race_df <- race_df %>%
+  mutate(Total = rowSums(across(where(is.numeric))))
+
+# Output formatted table
+knitr::kable(race_df, caption = "Race/ethnicity breakdown by sample group")  %>% 
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE, position = "center") %>%
+  column_spec(2:ncol(race_df), width = "4em")
+```
+
+Note: We chose to one-hot encode race/ethnicity into `White`, `Hispanic`, and `Other`.
+
+```{r}
+# Helper function to extract summary stats
+summarize_age <- function(vec) {
+  tibble(
+    Min = min(vec, na.rm = TRUE),
+    Q1 = quantile(vec, 0.25, na.rm = TRUE),
+    Median = median(vec, na.rm = TRUE),
+    Pooled = mean(vec, na.rm = TRUE),
+    Q3 = quantile(vec, 0.75, na.rm = TRUE),
+    Max = max(vec, na.rm = TRUE)
+  )
+}
+
+# Apply to all, JMML, and Control
+age_all <- summarize_age(meta_look$meta_age_at_colctn) %>% mutate(Group = "All")
+age_jmml <- summarize_age(meta_look %>% filter(meta_sample_group == "JMML") %>% pull(meta_age_at_colctn)) %>% mutate(Group = "JMML")
+age_ctrl <- summarize_age(meta_look %>% filter(meta_sample_group == "Control") %>% pull(meta_age_at_colctn)) %>% mutate(Group = "Control")
+
+# Combine and pivot
+age_summary <- bind_rows(age_all, age_jmml, age_ctrl) %>%
+  pivot_longer(-Group, names_to = "Statistic", values_to = "Value") %>%
+  pivot_wider(names_from = Group, values_from = Value)
+
+# Display
+knitr::kable(age_summary, digits = 2, caption = "Summary statistics for age at collection across sample groups")  %>% 
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE, position = "center") %>%
+  column_spec(2:ncol(sex_df), width = "4em")
+```
+
+Note: Two samples, `guth1` and `guth15`, did not have age at blood collection records. Median imputation was applied to both samples' `age at collection` records.
+
+```{r}
+# Helper function to extract summary stats
+summarize_hemo <- function(vec) {
+  tibble(
+    Min = min(vec, na.rm = TRUE),
+    Q1 = quantile(vec, 0.25, na.rm = TRUE),
+    Median = median(vec, na.rm = TRUE),
+    Pooled = mean(vec, na.rm = TRUE),
+    Q3 = quantile(vec, 0.75, na.rm = TRUE),
+    Max = max(vec, na.rm = TRUE)
+  )
+}
+
+# Apply to all, JMML, and Control
+hemo_all <- summarize_hemo(meta_look$meta_hemoglobin) %>% mutate(Group = "All")
+hemo_jmml <- summarize_hemo(meta_look %>% filter(meta_sample_group == "JMML") %>% pull(meta_hemoglobin)) %>% mutate(Group = "JMML")
+hemo_ctrl <- summarize_hemo(meta_look %>% filter(meta_sample_group == "Control") %>% pull(meta_hemoglobin)) %>% mutate(Group = "Control")
+
+# Combine and pivot
+hemo_summary <- bind_rows(hemo_all, hemo_jmml, hemo_ctrl) %>%
+  pivot_longer(-Group, names_to = "Statistic", values_to = "Value") %>%
+  pivot_wider(names_from = Group, values_from = Value)
+
+# Display
+knitr::kable(hemo_summary, digits = 2, caption = "Summary statistics for hemoglobin levels across sample groups")  %>% 
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE, position = "center") %>%
+  column_spec(2:ncol(sex_df), width = "4em")
+```
+
+## PCA of Case status
+```{r, fig.cap = "Principal Component Analysis (PCA) of the metabolomics data. Shown are PC1 vs PC2 scores for each sample, with points colored by case-status (blue = Control, red = JMML). PC1 explains 22.7% of the variance and PC2 explains 7.6%. Each point represents one individual. No clear separation by case-status is observed along the first two principal components."}
+knitr::include_graphics("../datamine_results/boxcox_bin_pca_case.png")
+```
+
+
+
+## PCA of Sex
+
+```{r, fig.cap = "Principal Component Analysis (PCA) of the metabolomics data. Shown are PC1 vs PC2 scores for each sample, with points colored by sex (orange = female, teal = male). PC1 explains 22.7% of the variance and PC2 explains 7.6%. Each point represents one individual. No clear separation by sex is observed along the first two principal components."}
+knitr::include_graphics("../datamine_results/boxcox_bin_pca_sex.png")
+```
+
+
+
+## Hierarchial clustering & Heatmaps of top 50 variable metabolites
+
+```{r, fig.cap = "Hierarchical clustering heatmap of the top 50 most variable metabolites. Shown are scaled intensities (z-scores) for the top 50 metabolites with the highest variance across samples. Rows represent individual samples and columns represent metabolites. Samples are annotated by disease status (JMML or Control) and sex (F = female, M = male)."}
+knitr::include_graphics("../datamine_results/boxcox_bin_heatmap_top50.png")
+```
+
+
+# Analysis Strategy
+
+```{r, fig.cap = "Our cross-validation setup for Random Forest."}
+knitr::include_graphics("../datamine_results/Standard_5CV.png")
+```
+
+We will compare logistic regression, SVM, random forest, and XGBoost, all using default parameters. Each model is trained and evaluated on the exact same training folds and held-out fold within a shared stratified cross-validation loop, ensuring a fair comparison.
+
+The classes (JMML, Control) are balanced within each fold.
+
+
+Performance metrics:
+
+Accuracy is the percentage of correct predictions.
+
+AUROC (Area Under the ROC Curve) measures a classifier's ability to distinguish between classes across all thresholds, representing the probability that a randomly chosen positive example is ranked higher than a randomly chosen negative one, with values ranging from 0.5 (random guessing) to 1.0 (perfect separation).
+
+Pooled AUROC is calculated by combining predictions and true labels from all cross-validation held-out folds into a single ROC curve.
+
+
+
+## Box-Cox Only
+
+We will analyze the imputed and Box-Cox transformed intensities for metabolites with less than 20% missingness.
+
+```{r, include = FALSE, echo = FALSE, warning=FALSE}
+source("dm_03_model_eval.R")
+final_table <- read.csv("../datamine_results/pooled_summaries_all_scenarios.csv") 
+
+fold_table <- read.csv("../datamine_results/fold-summaries.csv") 
+
+
+
+final_table_bc <- final_table %>%
+  filter(Scenario == "bc_only") %>%
+  select(-Scenario) %>% 
+  filter(Fold == "Pooled") %>% 
+  select(-Fold) %>% 
+  mutate(Model = factor(Model, levels = c("Logistic", "SVM", "RandomForest", "XGBoost"))) %>%
+  arrange(Model)
+
+
+final_table_bc_bin <- final_table %>%
+  filter(Scenario == "bc_bin") %>%
+  select(-Scenario) %>% 
+  filter(Fold == "Pooled") %>% 
+  select(-Fold) %>% 
+  mutate(Model = factor(Model, levels = c("Logistic", "SVM", "RandomForest", "XGBoost"))) %>%
+  arrange(Model)
+
+final_table_bc_meta <- final_table %>%
+  filter(Scenario == "bc_meta") %>%
+  select(-Scenario) %>% 
+  filter(Fold == "Pooled") %>% 
+  select(-Fold) %>% 
+  mutate(Model = factor(Model, levels = c("Logistic", "SVM", "RandomForest", "XGBoost"))) %>%
+  arrange(Model)
+
+final_table_bc_bin_meta <- final_table %>%
+  filter(Scenario == "bc_bin_meta") %>%
+  select(-Scenario) %>% 
+  filter(Fold == "Pooled") %>% 
+  select(-Fold) %>% 
+  mutate(Model = factor(Model, levels = c("Logistic", "SVM", "RandomForest", "XGBoost"))) %>%
+  arrange(Model)
+```
+
+
+### Evaluation
+
+```{r}
+ft <- fold_table %>% filter(Scenario == "bc_only") %>% arrange(Model, Fold) %>% select(-Scenario)
+
+knitr::kable(ft, format = "html", digits = 3, caption = "Model Performance Metrics") %>%
+  kableExtra::kable_styling(full_width = FALSE, bootstrap_options = c("striped", "hover", "condensed"))
+```
+
+#### Box-Cox Only Pooled Performance
+
+```{r, fig.cap="Cross-validated receiver operating characteristic (ROC) curves for four models classifying JMML versus control using metabolomic features. The solid curves show the pooled ROC for Logistic Regression (green), Support Vector Machine (orange), Random Forest (blue), and XGBoost (magenta). The dashed diagonal line represents random-chance performance (AUC = 0.5)."}
+knitr::include_graphics("../datamine_results/bc_only_pooledROC.png")
+```
+
+
+```{r}
+knitr::kable(final_table_bc, format = "html", digits = 3, caption = "Pooled Model Performance Metrics") %>%
+  kableExtra::kable_styling(full_width = FALSE, bootstrap_options = c("striped", "hover", "condensed"))
+```
+
+
+
+
+
+## Box-Cox + Binary Features
+
+This includes the same Box-Cox transformed data as above, with the addition of binary presence/absence features for metabolites with 20%–65% missingness.
+
+
+
+###  Evaluation
+
+```{r}
+ft <- fold_table %>% filter(Scenario == "bc_bin") %>% arrange(Model, Fold) %>% select(-Scenario)
+
+knitr::kable(ft, format = "html", digits = 3, caption = "Model Performance Metrics") %>%
+  kableExtra::kable_styling(full_width = FALSE, bootstrap_options = c("striped", "hover", "condensed"))
+```
+
+#### Pooled Performance
+
+
+```{r, fig.cap="Cross-validated receiver operating characteristic (ROC) curves for four models classifying JMML versus control using metabolomic features. The solid curves show the pooled ROC for Logistic Regression (green), Support Vector Machine (orange), Random Forest (blue), and XGBoost (magenta). The dashed diagonal line represents random-chance performance (AUC = 0.5)."}
+knitr::include_graphics("../datamine_results/bc_bin_pooledROC.png")
+```
+
+```{r}
+knitr::kable(final_table_bc_bin, format = "html", digits = 3, caption = "Pooled Model Performance Metrics") %>%
+  kableExtra::kable_styling(full_width = FALSE, bootstrap_options = c("striped", "hover", "condensed"))
+```
+
+
+
+
+## Box-Cox + Metadata
+
+We will analyze the Box-Cox transformed metabolite data (<20% missingness) along with sample metadata.
+
+
+### Evaluation
+
+```{r}
+ft <- fold_table %>% filter(Scenario == "bc_meta") %>% arrange(Model, Fold) %>% select(-Scenario)
+
+knitr::kable(ft, format = "html", digits = 3, caption = "Model Performance Metrics") %>%
+  kableExtra::kable_styling(full_width = FALSE, bootstrap_options = c("striped", "hover", "condensed"))
+```
+
+#### Pooled Performance
+
+```{r, fig.cap="Cross-validated receiver operating characteristic (ROC) curves for four models classifying JMML versus control using metabolomic features. The solid curves show the pooled ROC for Logistic Regression (green), Support Vector Machine (orange), Random Forest (blue), and XGBoost (magenta). The dashed diagonal line represents random-chance performance (AUC = 0.5)."}
+knitr::include_graphics("../datamine_results/bc_meta_pooledROC.png")
+```
+
+```{r}
+knitr::kable(final_table_bc_meta, format = "html", digits = 3, caption = "Pooled Model Performance Metrics") %>%
+  kableExtra::kable_styling(full_width = FALSE, bootstrap_options = c("striped", "hover", "condensed"))
+```
+
+
+## Box-Cox + Binary Features + Metadata
+
+A comprehensive model incorporating all available data: Box-Cox transformed intensities, binary features based on missingness, and sample metadata.
+
+
+### Evaluation
+
+```{r}
+ft <- fold_table %>% filter(Scenario == "bc_bin_meta") %>% arrange(Model, Fold) %>% select(-Scenario)
+
+knitr::kable(ft, format = "html", digits = 3, caption = "Model Performance Metrics") %>%
+  kableExtra::kable_styling(full_width = FALSE, bootstrap_options = c("striped", "hover", "condensed"))
+```
+
+#### Pooled Performance
+
+```{r, fig.cap="Cross-validated receiver operating characteristic (ROC) curves for four models classifying JMML versus control using metabolomic features. The solid curves show the pooled ROC for Logistic Regression (green), Support Vector Machine (orange), Random Forest (blue), and XGBoost (magenta). The dashed diagonal line represents random-chance performance (AUC = 0.5)."}
+knitr::include_graphics("../datamine_results/bc_bin_meta_pooledROC.png")
+```
+
+```{r}
+knitr::kable(final_table_bc_bin_meta, format = "html", digits = 3, caption = "Pooled Model Performance Metrics") %>%
+  kableExtra::kable_styling(full_width = FALSE, bootstrap_options = c("striped", "hover", "condensed"))
+```
+
+
+# Final Tally
+
+
+```{r}
+knitr::kable(final_table_bc, format = "html", digits = 3, caption = "Box-cox Only | Pooled Evaluation") %>%
+  kableExtra::kable_styling(full_width = FALSE, bootstrap_options = c("striped", "hover", "condensed"))
+```
+
+```{r}
+knitr::kable(final_table_bc_bin, format = "html", digits = 3, caption = "Box-cox + Binary data | Pooled Evaluation") %>%
+  kableExtra::kable_styling(full_width = FALSE, bootstrap_options = c("striped", "hover", "condensed"))
+```
+
+```{r}
+knitr::kable(final_table_bc_meta, format = "html", digits = 3, caption = "Box-cox + Metadata | Pooled Evaluation") %>%
+  kableExtra::kable_styling(full_width = FALSE, bootstrap_options = c("striped", "hover", "condensed"))
+```
+
+```{r}
+knitr::kable(final_table_bc_bin_meta, format = "html", digits = 3, caption = "Box-Cox + Binary Features + Metadata | Pooled Evaluation") %>%
+  kableExtra::kable_styling(full_width = FALSE, bootstrap_options = c("striped", "hover", "condensed"))
+```
+
+# Supplementary Exploratory Feature Analysis
+```{r, echo = FALSE, include = FALSE}
+source("dm_sup_features.R")
+```
+
+
+## Rank metabolites by class‐separation power (Limma)
+
+We used the limma framework to rank metabolites by their ability to distinguish JMML from control samples. Box-Cox transformed features (bc_) were extracted, and a design matrix was constructed to model group differences. A linear model was fit for each metabolite, followed by contrast estimation and empirical Bayes moderation. Metabolites were ranked by statistical significance, and results with p-values and FDR-adjusted values were saved for downstream analysis.
+
+Our old friend 2-hydroxychrysene is the only one to be significant after multiple test correction for boxcox_bin.
+
+```{r}
+limma_results_boxcox_bin <- read.csv("../datamine_results/ranked_metabolites_combined.csv")
+limma_results_boxcox_bin %>% filter(fdr < .05)
+```
+
+
+## Random-forest Importance
+
+```{r, fig.cap = "Random Forest Out-of-Bag Importance for boxcox_bin Top 30 metabolites ranked by out-of-bag (OOB) permutation importance from a random forest classifier trained on the full dataset. Importance is measured as the mean decrease in classification accuracy when each feature is permuted, averaged over all trees where the corresponding samples were not used for training. Features with higher scores contribute more to the model’s predictive performance."}
+knitr::include_graphics("../datamine_results/combined_rf_oob_importance.png")
+```
+

@@ -192,6 +192,14 @@ fish_plot_ZHP_p <- fish_ZHP %>%
     sig = ifelse(raw_p < 0.05, "Significant", "Not Significant")) %>% 
   mutate(sig = factor(sig, levels = c("Not Significant", "Significant")))
 
+
+# Drop columns that are entirely NA
+fish_plot_ZHP_p_clean <- fish_plot_ZHP_p %>%
+  select(where(~ !all(is.na(.))))  %>%
+  mutate(across(where(is.numeric), ~ round(., 2)))
+
+write.csv(fish_plot_ZHP_p_clean, file = "../res/annotated/clean_fisher_ZHP_table.csv")
+
 fish_p_ZHP <- ggplot(fish_plot_ZHP_p,  aes(x = log2_OR, y = neglog10_p)) +
   geom_hline(yintercept = -log10(0.05), linetype = "dashed", color = "gray") +
   geom_vline(xintercept = c(-1, 1), linetype = "dotted", color = "gray") +
@@ -217,7 +225,6 @@ fish_p_ZHP <- ggplot(fish_plot_ZHP_p,  aes(x = log2_OR, y = neglog10_p)) +
   )+
   theme_bw(base_size = 14)
 
-print(fish_p_ZHP)
 
 ggsave(filename = "../res/annotated/fisher_volcano_ZHP_pval.png", plot = fish_p_ZHP)
 
