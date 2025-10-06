@@ -6,7 +6,7 @@ library(RColorBrewer)
 
 
 # ==== Box-cox + Binary Analysis ====
-full_boxcox_bin <- readRDS(file ="../datamine_results/full_combined_matrix.rds")
+full_boxcox_bin <- readRDS(file ="../res/datamine/full_combined_matrix.rds")
 
 ## ==== Prepare Data ====
 # # Drop metadata columns, retain intensity (no prefix) + binary (bin_) features
@@ -39,8 +39,8 @@ p <- ggplot(scores_boxcox_bin, aes(PC1, PC2, color = meta_sample_group)) +
        color = "") +
   theme_minimal()
 
-# save to .png as you requested:
-ggsave("../datamine_results/boxcox_bin_pca_case.png", p, width = 6, height = 5, dpi = 300)
+# save to .png 
+ggsave("../res/datamine/boxcox_bin_pca_case.png", p, width = 6, height = 5, dpi = 300)
 
 
 
@@ -56,8 +56,8 @@ p <- ggplot(scores_boxcox_bin, aes(PC1, PC2, color = meta_sex)) +
   theme_minimal()
 
 
-# save to .png as you requested:
-ggsave("../datamine_results/boxcox_bin_pca_sex.png", p, width = 6, height = 5, dpi = 300)
+# save to .png:
+ggsave("../res/datamine/boxcox_bin_pca_sex.png", p, width = 6, height = 5, dpi = 300)
 
 
 ## ======= Heatmaps of top 50 variable metabolites ====
@@ -102,7 +102,7 @@ pheatmap(
   color = colorRampPalette(rev(brewer.pal(n = 9, name = "RdBu")))(100),
   show_rownames = FALSE,
   fontsize_col = 8,
-  filename = "../datamine_results/boxcox_bin_heatmap_top50.png",
+  filename = "../res/datamine/boxcox_bin_heatmap_top50.png",
   width = 8,
   height = 10
 )

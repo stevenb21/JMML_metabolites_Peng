@@ -249,6 +249,17 @@ ttest_results_Combined_ZHP_p <- ttest_ZHP %>%
     sig = ifelse(raw_p < 0.05, "Significant", "Not Significant")
   ) %>% mutate(sig = factor(sig, levels = c("Not Significant", "Significant")))
 
+
+# Drop columns that are entirely NA
+ttest_results_Combined_ZHP_clean <- ttest_results_Combined_ZHP_p %>%
+  select(where(~ !all(is.na(.))))  %>%
+  mutate(across(where(is.numeric), ~ round(., 2)))
+
+
+write.csv(ttest_results_Combined_ZHP_clean, 
+          file = "../res/annotated/ttest_results_Combined_ZHP_clean.csv")
+
+
 ZHP_ttest_volcano_pval <- ggplot(
   ttest_results_Combined_ZHP_p ,
   aes(x = log2_fc, y = -log10(raw_p))
@@ -458,6 +469,13 @@ fish_plot_RPNPF_p <- fish_RPNPF %>%
     neglog10_p = -log10(raw_p),
     sig = ifelse(raw_p < 0.05, "Significant", "Not Significant")) %>% 
   mutate(sig = factor(sig, levels = c("Not Significant", "Significant")))
+
+# Drop columns that are entirely NA
+fish_plot_RPNPF_p_clean <- fish_plot_RPNPF_p %>%
+  select(where(~ !all(is.na(.))))  %>%
+  mutate(across(where(is.numeric), ~ round(., 2)))
+
+write.csv(fish_plot_RPNPF_p_clean, file = "../res/annotated/clean_fisher_RPNPF_table.csv")
 
 fish_p_RPNPF <- ggplot(fish_plot_RPNPF_p,  aes(x = log2_OR, y = neglog10_p)) +
   geom_hline(yintercept = -log10(0.05), linetype = "dashed", color = "gray") +

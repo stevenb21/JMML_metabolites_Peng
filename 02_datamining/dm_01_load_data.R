@@ -94,7 +94,7 @@ combined_info <- combined_info %>%
 ## ==== M1 Data (Missingness <20%) =============================================
 
 # We want the imputed box-cox 'M1 data' (Missingness <20%).
-ZHP_imp_long <- readRDS("../data/ZHP_imputed.rds")
+ZHP_imp_long <- readRDS("../data/R_objects/ZHP_imputed.rds")
 
 
 ## ==== 'M2 data' (20% - 65% Missing) ====
@@ -102,7 +102,7 @@ ZHP_imp_long <- readRDS("../data/ZHP_imputed.rds")
 # We want to make this categorical.
 
 ## Not-imputed dataset
-ZHP_filtered <- readRDS("../data/ZHP_annotated_filtered.rds") %>% 
+ZHP_filtered <- readRDS("../data/R_objects/ZHP_annotated_filtered.rds") %>% 
   filter(sample_group %in% c("JMML", "Control"))
 
 
@@ -168,7 +168,7 @@ full_ZHP <- bin_wide_ZHP %>%
 ## ==== M1 Data (Missingness <20%) =============================================
 
 # We want the imputed box-cox 'M1 data' (Missingness <20%).
-RPNPF_imp_long <- readRDS("../data/RPNPF_imputed.rds")
+RPNPF_imp_long <- readRDS("../data/R_objects/RPNPF_imputed.rds")
 
 
 ## ==== 'M2 data' (20% - 65% Missing) ====
@@ -176,7 +176,7 @@ RPNPF_imp_long <- readRDS("../data/RPNPF_imputed.rds")
 # We want to make this categorical.
 
 ## Not-imputed dataset
-RPNPF_filtered <- readRDS("../data/RPNPF_annotated_filtered.rds") %>% 
+RPNPF_filtered <- readRDS("../data/R_objects/RPNPF_annotated_filtered.rds") %>% 
   filter(sample_group %in% c("JMML", "Control"))
 
 
@@ -300,4 +300,4 @@ full_combined <- full_combined %>%  mutate(
 )
 
 # — save out —  
-saveRDS(full_combined, "../datamine_results/full_combined_matrix.rds")
+saveRDS(full_combined, "../res/datamine/full_combined_matrix.rds")

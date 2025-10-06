@@ -8,7 +8,8 @@ library(PRROC)
 library(yardstick)
 
 # 1) Read data once
-full_data <- readRDS("../datamine_results/full_combined_matrix.rds") %>%
+
+full_data <- readRDS("../res/datamine/full_combined_matrix.rds") |> 
   select(-meta_bd_blood_collection_time_x)
 
 # 2) Define feature‐selection scenarios
@@ -192,7 +193,7 @@ fold_res <- imap_dfr(results, ~ .x$per_fold %>% mutate(Scenario = .y)) %>%
   mutate(Model = factor(Model, levels = c("Logistic", "SVM", "RandomForest", "XGBoost")))
 
 
-write_csv(fold_res, "../datamine_results/fold-summaries.csv")
+write_csv(fold_res, "../res/datamine/fold-summaries.csv")
 
 # 6) Aggregate pooled summaries across scenarios
 pooled_all <- imap_dfr(results, ~ .x$pooled %>% mutate(Scenario = .y)) %>%
@@ -200,7 +201,7 @@ pooled_all <- imap_dfr(results, ~ .x$pooled %>% mutate(Scenario = .y)) %>%
   mutate(Model = factor(Model, levels = c("Logistic", "SVM", "RandomForest", "XGBoost")))
 
 # Write out a CSV of pooled results
-write_csv(pooled_all, "../datamine_results/pooled_summaries_all_scenarios.csv")
+write_csv(pooled_all, "../res/datamine/pooled_summaries_all_scenarios.csv")
 
 # 7) Plot & save ROC for each scenario
 
@@ -273,7 +274,7 @@ for (sc in names(results)) {
   
   
   ggsave(
-    filename = file.path("../datamine_results", paste0(sc, "_pooledROC.png")),
+    filename = file.path("../res/datamine", paste0(sc, "_pooledROC.png")),
     plot     = p,
     width    = 6, height = 6,
     units    = "in",

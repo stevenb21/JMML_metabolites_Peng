@@ -44,9 +44,9 @@ library(ggVennDiagram)
 set.seed(123)
 ```
 
-```{r, eval = FALSE, echo = FALSE}
+```{r, eval = TRUE, echo = FALSE}
 # Run this to populate the results:
-annotated_path <- "../01_annotated/"
+annotated_path <- "../01_annotated"
 source("../01_annotated/main.R")
 ```
 
@@ -215,25 +215,25 @@ cat("```r\n", code, "\n```\n", sep = "")
 ```
 
 
-```{r}
+```{r, echo = FALSE}
 knitr::include_graphics("../res/annotated/QC/histogram_cv_before_filtering_JMML_ZHP.png")
 ```
 
 ---
 
-```{r}
+```{r, echo = FALSE}
 knitr::include_graphics("../res/annotated/QC/histogram_cv_before_filtering_Control_ZHP.png")
 ```
 
 ---
   
-```{r}
+```{r, echo = FALSE}
 knitr::include_graphics("../res/annotated/QC/histogram_cv_before_filtering_JMML_RPNPF.png")
 ```
 
 ---
 
-```{r}
+```{r, echo = FALSE}
 knitr::include_graphics("../res/annotated/QC/histogram_cv_before_filtering_Control_RPNPF.png")
 ```
 
@@ -257,7 +257,7 @@ This ensures each metabolite is represented only once in downstream analyses, wi
 ---
 
 
-```{r}
+```{r, echo = FALSE}
 fitler_summary <- read_xlsx("../res/annotated/filter_summary.xlsx")
 
 datatable(
@@ -347,7 +347,7 @@ Contingency table for 2-Oxobutanoic acid detection
 
 ###  Fisher's exact data table for unadjusted p-values in ZHP
 
-```{r}
+```{r, echo = FALSE}
 fish_plot_ZHP_p_clean <- read.csv(file = "../res/annotated/clean_fisher_ZHP_table.csv")
 
 # Render as an interactive DT table
@@ -399,43 +399,11 @@ knitr::include_graphics("../res/annotated/fisher_volcano_RPNPF_pval.png")
 
 ---
 
-### start here
-### start here
-### start here
-### start here
-### start here
-### start here
-### start here
-### start here
-### start here
-### start here
-### start here
-### start here
-### start here
-### start here
-### start here
-### start here
-### start here
-### start here
-### start here
-### start here
-### start here
-### start here
-### start here
-### start here
-### start here
-### start here
-### start here
-### start here
-### start here
 
 ###  Fisher's exact data table for unadjusted p-values in RPNPF
 
-```{r}
-# Drop columns that are entirely NA
-fish_plot_RPNPF_p_clean <- fish_plot_RPNPF_p %>%
-  select(where(~ !all(is.na(.))))  %>%
-  mutate(across(where(is.numeric), ~ round(., 2)))
+```{r, echo = FALSE}
+fish_plot_RPNPF_p_clean <- read.csv(file = "../res/annotated/clean_fisher_RPNPF_table.csv")
 
 # Render as an interactive DT table
 datatable(fish_plot_RPNPF_p_clean,
@@ -465,17 +433,18 @@ We set any negative values after imputation to 0.
 
 We use PCA plots (using Box-Cox transformed intensities) to validate our imputation. 
 
+
 ---
 
-```{r}
-print(p_before_ZHP) #guth538
+```{r, echo = FALSE}
+knitr::include_graphics("../res/annotated/QC/PCA_boxcox_before_imputation_ZHP.png")
 ```
 
 ---
 
 
-```{r}
-print(p_after_ZHP)
+```{r, echo = FALSE}
+knitr::include_graphics("../res/annotated/QC/PCA_boxcox_after_imputation_ZHP.png")
 ```
 
 ---
@@ -486,15 +455,15 @@ Imputation seems to have worked fine for both ZHP and RPNPF.
 
 ---
 
-```{r}
-print(p_before_RPNPF)
+```{r, echo = FALSE}
+knitr::include_graphics("../res/annotated/QC/PCA_boxcox_before_imputation_RPNPF.png")
 ```
 
 ---
-
-```{r}
-print(p_after_RPNPF)
+```{r, echo = FALSE}
+knitr::include_graphics("../res/annotated/QC/PCA_boxcox_after_imputation_RPNPF.png")
 ```
+
 
 ---
 
@@ -513,28 +482,76 @@ cat("```r\n", code, "\n```\n", sep = "")
 
 ---
 
-```{r}
-print(p_removed_ZHP_ttest)
+```{r, echo = FALSE}
+knitr::include_graphics("../res/annotated/RPNPF_ttest_volcano_pval.png")
+```
+
+
+---
+
+### TTest data table for unadjusted p-values in RPNPF
+
+```{r, echo = FALSE}
+# Drop columns that are entirely NA
+ttest_results_Combined_RPNPF_clean <- ttest_results_Combined_RPNPF_p %>%
+  select(where(~ !all(is.na(.))))  %>%
+  mutate(across(where(is.numeric), ~ round(., 2)))
+
+# Render as an interactive DT table
+datatable(ttest_results_Combined_RPNPF_clean,
+          options = list(pageLength = 10, scrollX = TRUE),
+          filter = "top") 
 ```
 
 ---
 
 
+```{r, echo = FALSE}
+knitr::include_graphics("../res/annotated/QC/missingness_ZHP_ttest.png")
+```
+
+
+
 ---
 
-```{r}
-print(ZHP_ttest_volcano_pval)
+
+```{r, echo = FALSE}
+knitr::include_graphics("../res/annotated/RPNPF_ttest_volcano_pval.png")
 ```
+
+
+
+---
+
+### TTest data table for unadjusted p-values in RPNPF
+
+```{r, echo = FALSE}
+# Drop columns that are entirely NA
+ttest_results_Combined_RPNPF_clean <- ttest_results_Combined_RPNPF_p %>%
+  select(where(~ !all(is.na(.))))  %>%
+  mutate(across(where(is.numeric), ~ round(., 2)))
+
+# Render as an interactive DT table
+datatable(ttest_results_Combined_RPNPF_clean,
+          options = list(pageLength = 10, scrollX = TRUE),
+          filter = "top") 
+```
+
+---
+
+
+
+```{r, echo = FALSE}
+knitr::include_graphics("../res/annotated/ZHP_ttest_volcano_pval.png")
+```
+
 
 ---
 
 ###  TTest data table for unadjusted p-values in ZHP
 
-```{r}
-# Drop columns that are entirely NA
-ttest_results_Combined_ZHP_clean <- ttest_results_Combined_ZHP_p %>%
-  select(where(~ !all(is.na(.))))  %>%
-  mutate(across(where(is.numeric), ~ round(., 2)))
+```{r, echo = FALSE}
+ttest_results_Combined_ZHP_clean <- read.csv("../res/annotated/ttest_results_Combined_ZHP_clean.csv")
  
 # Render as an interactive DT table
 datatable(ttest_results_Combined_ZHP_clean,
@@ -568,32 +585,6 @@ Table Legend
 
 ---
 
-```{r}
-print(RPNPF_ttest_volcano_pval)
-```
-
----
-
-### TTest data table for unadjusted p-values in RPNPF
-
-```{r}
-# Drop columns that are entirely NA
-ttest_results_Combined_RPNPF_clean <- ttest_results_Combined_RPNPF_p %>%
-  select(where(~ !all(is.na(.))))  %>%
-  mutate(across(where(is.numeric), ~ round(., 2)))
-
-# Render as an interactive DT table
-datatable(ttest_results_Combined_RPNPF_clean,
-          options = list(pageLength = 10, scrollX = TRUE),
-          filter = "top") 
-```
-
----
-
-
-
-
-
 ##  Multiple Testing Correction
 
 For each metabolite, we test the null hypothesis that there is no meaningful difference in intensity between JMML and Control groups.
@@ -605,14 +596,14 @@ This helps ensure that our list of significant findings is not dominated by rand
 ---
 
 
-```{r}
+```{r, echo = FALSE}
 print(fish_p_ZHP_fdr)
 ```
 
 ---
 
 
-```{r}
+```{r, echo = FALSE}
 print(ZHP_ttest_volcano_FDR)
 ```
 
@@ -620,14 +611,14 @@ print(ZHP_ttest_volcano_FDR)
 ---
 
 
-```{r}
+```{r, echo = FALSE}
 print(fish_p_RPNPF_fdr)
 ```
 
 ---
 
 
-```{r}
+```{r, echo = FALSE}
 print(RPNPF_ttest_volcano_FDR)
 ```
 
@@ -636,18 +627,18 @@ print(RPNPF_ttest_volcano_FDR)
 
 
 
-```{r}
+```{r, echo = FALSE}
 print(p_violin_ZHP)
 ```
 
 ---
 
-```{r}
+```{r, echo = FALSE}
 print(p_violin_RPNPF)
 ```
 
 ##  Table of significant hits (FDR < .05)
-```{r}
+```{r, echo = FALSE}
 final_res_clean_fdr <- final_results %>% 
   filter(global_fdr < .05) %>% 
   mutate(across(where(is.numeric), ~ round(., 2)))
@@ -659,7 +650,7 @@ datatable(final_res_clean_fdr,
 
 ---
 
-```{r}
+```{r, echo = FALSE}
 print(ttest_sig)
 ```
 
@@ -690,7 +681,7 @@ cat("```r\n", code, "\n```\n", sep = "")
 
 ###  Table of metabolites used for pathway analysis:
 
-```{r}
+```{r, echo = FALSE}
 final_res_clean <- final_results %>% 
   filter(raw_p < .05) %>% 
   mutate(across(where(is.numeric), ~ round(., 2)))
@@ -708,15 +699,15 @@ After plugging in the above compounds into MetaboAnalyst (https://dev.metaboanal
 ---
 
 ```{r, echo = FALSE, include = FALSE}
-source("pathway.R")
-pathway <- read_csv("../results/pathway_results.csv")
+#source("pathway.R")
+pathway <- read_csv("../res/annotated/pathway_results.csv")
 
 colnames(pathway)[1] <- "Compound Name"
 ```
 
 ###  Pathway analysis results table:
 
-```{r}
+```{r, echo = FALSE}
 datatable(pathway ,
           options = list(pageLength = 10, scrollX = TRUE),
           filter = "top") 
@@ -726,10 +717,7 @@ datatable(pathway ,
 
 #  Sex Analysis
 
-```{r, include = FALSE}
-source("05a_Sex_analysis.R")
-source("05b_Sex_analysis_viz.R")
-```
+
 
 ##  Overview
 
@@ -749,19 +737,19 @@ By comparing across these groups, we can see whether observed sex effects are di
 
 ---
 
-```{r}
+```{r, echo = FALSE}
 print(fish_p_ZHP_sex_Combined_JMML_Control)
 ```
 
 ---
 
-```{r}
+```{r, echo = FALSE}
 print(p_sex_volcano_Combined_ZHP)
 ```
 
 ---
 
-```{r}
+```{r, echo = FALSE}
 print(p_violin_ZHP_Combined)
 ```
 
@@ -769,7 +757,13 @@ print(p_violin_ZHP_Combined)
 
 ###  Combined Sex Difference Results Table (ZHP): 
 
-```{r}
+```{r, include = FALSE, echo = FALSE}
+source("../01_annotated/05a_Sex_analysis.R")
+source("../01_annotated/05b_Sex_analysis_viz.R")
+```
+
+
+```{r, echo = FALSE}
 datatable(combined_results_ZHP %>% filter(cohort == "Combined_JMML_Control"),
           options = list(pageLength = 10, scrollX = TRUE),
           filter = "top") 
@@ -778,19 +772,19 @@ datatable(combined_results_ZHP %>% filter(cohort == "Combined_JMML_Control"),
 
 ---
 
-```{r}
+```{r, echo = FALSE}
 print(fish_p_RPNPF_sex_Combined_JMML_Control)
 ```
 
 ---
 
-```{r}
+```{r, echo = FALSE}
 print(p_sex_volcano_Combined_RPNPF)
 ```
 
 ---
 
-```{r}
+```{r, echo = FALSE}
 print(p_violin_RPNPF_Combined)
 ```
 
@@ -798,7 +792,7 @@ print(p_violin_RPNPF_Combined)
 
 ###  Combined Sex Difference Results Table (RPNPF): 
 
-```{r}
+```{r, echo = FALSE}
 datatable(combined_results_RPNPF %>% filter(cohort == "Combined_JMML_Control"),
           options = list(pageLength = 10, scrollX = TRUE),
           filter = "top") 
@@ -811,19 +805,19 @@ datatable(combined_results_RPNPF %>% filter(cohort == "Combined_JMML_Control"),
 
 ---
 
-```{r}
+```{r, echo = FALSE}
 print(fish_p_ZHP_sex_Control)
 ```
 
 ---
 
-```{r}
+```{r, echo = FALSE}
 print(p_sex_volcano_Control_ZHP)
 ```
 
 ---
 
-```{r}
+```{r, echo = FALSE}
 print(p_violin_ZHP_Control)
 ```
 
@@ -831,7 +825,7 @@ print(p_violin_ZHP_Control)
 
 ###  Control-Only Sex Difference Results Table (ZHP): 
 
-```{r}
+```{r, echo = FALSE}
 datatable(combined_results_ZHP %>% filter(cohort == "Control_only"),
           options = list(pageLength = 10, scrollX = TRUE),
           filter = "top") 
@@ -840,19 +834,19 @@ datatable(combined_results_ZHP %>% filter(cohort == "Control_only"),
 
 ---
 
-```{r}
+```{r, echo = FALSE}
 print(fish_p_RPNPF_sex_Control)
 ```
 
 ---
 
-```{r}
+```{r, echo = FALSE}
 print(p_sex_volcano_Control_RPNPF)
 ```
 
 ---
 
-```{r}
+```{r, echo = FALSE}
 print(p_violin_RPNPF_Control)
 ```
 
@@ -860,7 +854,7 @@ print(p_violin_RPNPF_Control)
 
 ###  Control-Only Sex Difference Results Table (RPNPF): 
 
-```{r}
+```{r, echo = FALSE}
 datatable(combined_results_RPNPF %>% filter(cohort == "Control_only"),
           options = list(pageLength = 10, scrollX = TRUE),
           filter = "top") 
@@ -873,19 +867,19 @@ datatable(combined_results_RPNPF %>% filter(cohort == "Control_only"),
 
 ---
 
-```{r}
+```{r, echo = FALSE}
 print(fish_p_ZHP_sex_JMML)
 ```
 
 ---
 
-```{r}
+```{r, echo = FALSE}
 print(p_sex_volcano_JMML_ZHP)
 ```
 
 ---
 
-```{r}
+```{r, echo = FALSE}
 print(p_violin_ZHP_JMML)
 ```
 
@@ -893,7 +887,7 @@ print(p_violin_ZHP_JMML)
 
 ###  JMML-Only Sex Difference Results Table (ZHP):
 
-```{r}
+```{r, echo = FALSE}
 datatable(combined_results_ZHP %>% filter(cohort == "JMML_only"),
           options = list(pageLength = 10, scrollX = TRUE),
           filter = "top") 
@@ -901,19 +895,19 @@ datatable(combined_results_ZHP %>% filter(cohort == "JMML_only"),
 
 ---
 
-```{r}
+```{r, echo = FALSE}
 print(fish_p_RPNPF_sex_JMML)
 ```
 
 ---
 
-```{r}
+```{r, echo = FALSE}
 print(p_sex_volcano_JMML_RPNPF)
 ```
 
 ---
 
-```{r}
+```{r, echo = FALSE}
 print(p_violin_RPNPF_JMML)
 ```
 
@@ -921,7 +915,7 @@ print(p_violin_RPNPF_JMML)
 
 ### JMML-Only Sex Difference Results Table (RPNPF):
 
-```{r}
+```{r, echo = FALSE}
 datatable(combined_results_RPNPF %>% filter(cohort == "JMML_only"),
           options = list(pageLength = 10, scrollX = TRUE),
           filter = "top") 
@@ -931,15 +925,12 @@ datatable(combined_results_RPNPF %>% filter(cohort == "JMML_only"),
 
 ## Venn-Diagram of Sex Analysis Cohorts
 
-```{r, include= FALSE}
-source("venn_diagram.R")
-```
 
-```{r}
+```{r, echo = FALSE}
 print(p_sex)
 ```
 
-```{r}
+```{r, echo = FALSE}
 print(venn_list_sex)
 ```
 
@@ -950,32 +941,29 @@ print(venn_list_sex)
 
 Consistency of sex-associated hits between JMML-only and Control-only.
 
-```{r, include = FALSE}
-source("Consistency_scatterplot.R")
-```
 
 ---
 
-```{r}
+```{r, echo = FALSE}
 print(p_scatter_ttest_ZHP)
 ```
 
 ---
 
-```{r}
+```{r, echo = FALSE}
 print(p_scatter_fish_ZHP)
 ```
 
 ---
 
 
-```{r}
+```{r, echo = FALSE}
 print(p_scatter_ttest_RPNPF)
 ```
 
 ---
 
-```{r}
+```{r, echo = FALSE}
 print(p_scatter_fish_RPNPF)
 ```
 
@@ -983,9 +971,9 @@ print(p_scatter_fish_RPNPF)
 
 # Somatic Mutation Analysis
 
-```{r, include = FALSE}
-source("06a_Somatic_analysis.R")
-source("06b_Somatic_analysis_viz.R")
+```{r, include = FALSE, echo = FALSE}
+source("../01_annotated/06a_Somatic_analysis.R")
+source("../01_annotated/06b_Somatic_analysis_viz.R")
 ```
 
 ##  Overview
@@ -997,43 +985,43 @@ Cohort: We restrict to JMML samples and split them by Somatic_Neg versus Somatic
 Note - we set aside the two JMML samples labeled with 'unknown' somatic status. 
 
 
-```{r}
+```{r, echo = FALSE}
 fish_p_ZHP_somatic_Combined_JMML_Control
 ```
 
 ---
 
-```{r}
+```{r, echo = FALSE}
 p_sex_volcano_Combined_ZHP
 ```
 
 ---
 
-```{r}
+```{r, echo = FALSE}
 p_violin_ZHP_Combined
 ```
 
 ---
 
-```{r}
+```{r, echo = FALSE}
 fish_p_RPNPF_somatic_Combined_JMML_Control
 ```
 
 ---
 
-```{r}
+```{r, echo = FALSE}
 p_sex_volcano_Combined_RPNPF
 ```
 
 ---
 
-```{r}
+```{r, echo = FALSE}
 p_violin_RPNPF_Combined
 ```
 
 ##  Somatic Mutation Results Table: 
 
-```{r}
+```{r, echo = FALSE}
 datatable(combined_results,
           options = list(pageLength = 10, scrollX = TRUE),
           filter = "top") 
@@ -1042,20 +1030,65 @@ datatable(combined_results,
 
 # Venn-Diagram of Analysis Cohorts
 
-```{r}
+```{r, echo = FALSE}
 print(p_venn)
 ```
 
 ---
 
-```{r}
+```{r, echo = FALSE}
 print(venn_list)
 ```
 
 
-# Session Info
+# Appendix
 
-```{r}
-sessionInfo()
+
+
+```{r, echo = FALSE, message = FALSE, include = FALSE}
+# Load needed package
+suppressPackageStartupMessages({
+library(stringr)
+library(devtools)
+})
+
+
+# Directory containing your scripts
+script_dir <- getwd()
+
+# Find all R and Rmd files
+files <- list.files(script_dir,
+                    pattern = "\\.[Rr](md)?$",
+                    full.names = TRUE)
+
+# Function to extract library() / require() calls
+extract_libs <- function(file) {
+  lines <- readLines(file, warn = FALSE)
+  # Match or require(pkg) with or without quotes
+  libs <- str_match(lines, "\\b(library|require)\\s*\\(([^)]+)\\)")[,3]
+  # Clean up quotes/spaces
+  libs <- str_remove_all(libs, "[\"']")
+  libs <- trimws(libs)
+  libs <- libs[!is.na(libs) & libs != ""]
+  return(libs)
+}
+
+# Loop through files and collect
+all_libs <- unlist(lapply(files, extract_libs))
+
+# Unique vector of packages
+unique_libs <- unique(all_libs)
+
+lapply(unique_libs, function(pkg) {
+  tryCatch(
+    suppressPackageStartupMessages({library(pkg, character.only = TRUE)}),
+    error = function(e) message("", pkg)
+  )
+})
+```
+
+```{r, echo = FALSE}
+getwd()
+devtools::session_info()
 ```
 

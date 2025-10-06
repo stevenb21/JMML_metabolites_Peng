@@ -2,7 +2,7 @@ library(tidyverse)
 library(ggrepel)
 
 
-source("05a_Sex_analysis.R")
+#source("05a_Sex_analysis.R")
 #Make sure you run the above line if you are debugging!
 
 combined_results <- readxl::read_xlsx("../res/annotated/sex/sex_analysis.xlsx")

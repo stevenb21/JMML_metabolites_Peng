@@ -15,7 +15,7 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(echo = FALSE, dev = "png", dev.args = list(type = "cairo"), dpi = 300)
 ```
 
 ```{r, include = FALSE, warning = FALSE}

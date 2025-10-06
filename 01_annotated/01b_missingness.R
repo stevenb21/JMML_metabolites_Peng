@@ -155,6 +155,8 @@ p_removed_ZHP_ttest <- ggplot(ZHP_removed_curve, aes(x = threshold, y = n_remove
   theme_bw(base_size = 12)
 
 
+ggsave("../res/annotated/QC/missingness_ZHP_ttest.png", plot = p_removed_ZHP_ttest)
+
 
 # Plot
 p_removed_ZHP_fisher <- ggplot(ZHP_removed_curve, aes(x = threshold, y = n_removed)) +

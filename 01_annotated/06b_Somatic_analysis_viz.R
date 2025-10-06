@@ -2,7 +2,7 @@ library(tidyverse)
 library(ggrepel)
 
 
-source("06a_Somatic_analysis.R")
+#source("06a_Somatic_analysis.R")
 combined_results <- readxl::read_xlsx("../res/annotated/somatic/somatic_analysis.xlsx")
 
 
