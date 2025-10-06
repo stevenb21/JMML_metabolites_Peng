@@ -688,8 +688,7 @@ fish_p_ZHP_fdr_pub <- ggplot(fish_plot_ZHP_fdr, aes(x = log2_OR, y = neglog10_fd
     legend.position = "bottom",
     legend.box      = "vertical",
     legend.title    = element_text(face = "bold"),
-    legend.text     = element_text(size = 11),
-    legend.margin   = margin(t = 5)
+    legend.text     = element_text(size = 11)
   ) +
   guides(
     color = guide_legend(title.position = "top", nrow = 1),
@@ -697,6 +696,6 @@ fish_p_ZHP_fdr_pub <- ggplot(fish_plot_ZHP_fdr, aes(x = log2_OR, y = neglog10_fd
   )
 
 
-#print(fish_p_ZHP_fdr_pub)
+print(fish_p_ZHP_fdr_pub)
 
 ggsave(filename = "../res/annotated/fisher_volcano_ZHP_FDR_pub.png", plot = fish_p_ZHP_fdr_pub)

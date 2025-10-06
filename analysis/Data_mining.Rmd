@@ -12,10 +12,13 @@ output:
     df_print: paged           
     fig_caption: true         
     self_contained: true      
+    code_folding: hide
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE, dev = "png", dev.args = list(type = "cairo"), dpi = 300)
+knitr::opts_chunk$set(echo = FALSE, dev = "png", dev.args = list(type = "cairo"), dpi = 300,
+                      fig.retina = 3, 
+                      out.width="100%")
 ```
 
 ```{r, include = FALSE, warning = FALSE}
@@ -26,8 +29,8 @@ library(glue)
 ```
 
 ```{r, include = FALSE, echo = FALSE}
-source("dm_01_load_data.R")
-source("dm_02_EDA.R")
+source("../02_datamining/dm_01_load_data.R")
+source("../02_datamining/dm_02_EDA.R")
 ```
 
 
@@ -43,13 +46,27 @@ We are working with a matrix of 116 samples (rows), and the columns consist of t
 * **Binary detection indicators** (`bin_` prefix) for metabolites with 20%–65% missingness, indicating presence or absence.
 * **Sample metadata** (`meta_` prefix), including variables such as sex, race/ethnicity, and hemoglobin level.
 
+```{r, echo=FALSE, results='asis', warning=FALSE}
+
+script <- "../02_datamining/dm_01_load_data.R"
+
+code <- paste(readLines(script), collapse = "\n")
+cat("```r\n", code, "\n```\n", sep = "")
+```
+
 # Exploratory Data Analysis
 
+```{r, echo=FALSE, results='asis', warning=FALSE}
+script <- "../02_datamining/dm_02_EDA.R"
+
+code <- paste(readLines(script), collapse = "\n")
+cat("```r\n", code, "\n```\n", sep = "")
+```
 
 The metadata columns we utilize are sex, race/ethnicity, and hemoglobin level. 
 
 ```{r, include = FALSE, echo = FALSE}
-meta_look <- readRDS(file = "../datamine_results/full_combined_matrix.rds")
+meta_look <- readRDS(file = "../res/datamine/full_combined_matrix.rds")
 
 
 meta_look <- meta_look %>%
@@ -61,7 +78,9 @@ meta_look <- meta_look %>%
 ```{r}
 # Make sure meta_sample_group is a factor with consistent levels
 meta_look <- meta_look %>%
-  mutate(across(c(meta_sample_group, meta_sex), ~ as.factor(.)))
+  mutate(across(c(meta_sample_group, meta_sex), ~ as.factor(.))) |> 
+  filter(meta_sex %in% c("F","M")) |> 
+  mutate(meta_sex = factor(meta_sex))
 
 # Build 2D contingency table
 sex_tab <- table(Sex = meta_look$meta_sex, Group = meta_look$meta_sample_group)
@@ -165,8 +184,9 @@ knitr::kable(hemo_summary, digits = 2, caption = "Summary statistics for hemoglo
 ```
 
 ## PCA of Case status
+
 ```{r, fig.cap = "Principal Component Analysis (PCA) of the metabolomics data. Shown are PC1 vs PC2 scores for each sample, with points colored by case-status (blue = Control, red = JMML). PC1 explains 22.7% of the variance and PC2 explains 7.6%. Each point represents one individual. No clear separation by case-status is observed along the first two principal components."}
-knitr::include_graphics("../datamine_results/boxcox_bin_pca_case.png")
+knitr::include_graphics("../res/datamine/boxcox_bin_pca_case.png")
 ```
 
 
@@ -174,7 +194,7 @@ knitr::include_graphics("../datamine_results/boxcox_bin_pca_case.png")
 ## PCA of Sex
 
 ```{r, fig.cap = "Principal Component Analysis (PCA) of the metabolomics data. Shown are PC1 vs PC2 scores for each sample, with points colored by sex (orange = female, teal = male). PC1 explains 22.7% of the variance and PC2 explains 7.6%. Each point represents one individual. No clear separation by sex is observed along the first two principal components."}
-knitr::include_graphics("../datamine_results/boxcox_bin_pca_sex.png")
+knitr::include_graphics("../res/datamine/boxcox_bin_pca_sex.png")
 ```
 
 
@@ -182,15 +202,11 @@ knitr::include_graphics("../datamine_results/boxcox_bin_pca_sex.png")
 ## Hierarchial clustering & Heatmaps of top 50 variable metabolites
 
 ```{r, fig.cap = "Hierarchical clustering heatmap of the top 50 most variable metabolites. Shown are scaled intensities (z-scores) for the top 50 metabolites with the highest variance across samples. Rows represent individual samples and columns represent metabolites. Samples are annotated by disease status (JMML or Control) and sex (F = female, M = male)."}
-knitr::include_graphics("../datamine_results/boxcox_bin_heatmap_top50.png")
+knitr::include_graphics("../res/datamine/boxcox_bin_heatmap_top50.png")
 ```
 
 
 # Analysis Strategy
-
-```{r, fig.cap = "Our cross-validation setup for Random Forest."}
-knitr::include_graphics("../datamine_results/Standard_5CV.png")
-```
 
 We will compare logistic regression, SVM, random forest, and XGBoost, all using default parameters. Each model is trained and evaluated on the exact same training folds and held-out fold within a shared stratified cross-validation loop, ensuring a fair comparison.
 
@@ -211,11 +227,18 @@ Pooled AUROC is calculated by combining predictions and true labels from all cro
 
 We will analyze the imputed and Box-Cox transformed intensities for metabolites with less than 20% missingness.
 
-```{r, include = FALSE, echo = FALSE, warning=FALSE}
-source("dm_03_model_eval.R")
-final_table <- read.csv("../datamine_results/pooled_summaries_all_scenarios.csv") 
+```{r, echo=FALSE, results='asis', warning=FALSE}
+script <- "../02_datamining/dm_03_model_eval.R"
 
-fold_table <- read.csv("../datamine_results/fold-summaries.csv") 
+code <- paste(readLines(script), collapse = "\n")
+cat("```r\n", code, "\n```\n", sep = "")
+```
+
+```{r, include = FALSE, echo = FALSE, warning=FALSE}
+source("../02_datamining/dm_03_model_eval.R")
+final_table <- read.csv("../res/datamine/pooled_summaries_all_scenarios.csv") 
+
+fold_table <- read.csv("../res/datamine/fold-summaries.csv") 
 
 
 
@@ -266,7 +289,7 @@ knitr::kable(ft, format = "html", digits = 3, caption = "Model Performance Metri
 #### Box-Cox Only Pooled Performance
 
 ```{r, fig.cap="Cross-validated receiver operating characteristic (ROC) curves for four models classifying JMML versus control using metabolomic features. The solid curves show the pooled ROC for Logistic Regression (green), Support Vector Machine (orange), Random Forest (blue), and XGBoost (magenta). The dashed diagonal line represents random-chance performance (AUC = 0.5)."}
-knitr::include_graphics("../datamine_results/bc_only_pooledROC.png")
+knitr::include_graphics("../res/datamine/bc_only_pooledROC.png")
 ```
 
 
@@ -298,7 +321,7 @@ knitr::kable(ft, format = "html", digits = 3, caption = "Model Performance Metri
 
 
 ```{r, fig.cap="Cross-validated receiver operating characteristic (ROC) curves for four models classifying JMML versus control using metabolomic features. The solid curves show the pooled ROC for Logistic Regression (green), Support Vector Machine (orange), Random Forest (blue), and XGBoost (magenta). The dashed diagonal line represents random-chance performance (AUC = 0.5)."}
-knitr::include_graphics("../datamine_results/bc_bin_pooledROC.png")
+knitr::include_graphics("../res/datamine/bc_bin_pooledROC.png")
 ```
 
 ```{r}
@@ -326,7 +349,7 @@ knitr::kable(ft, format = "html", digits = 3, caption = "Model Performance Metri
 #### Pooled Performance
 
 ```{r, fig.cap="Cross-validated receiver operating characteristic (ROC) curves for four models classifying JMML versus control using metabolomic features. The solid curves show the pooled ROC for Logistic Regression (green), Support Vector Machine (orange), Random Forest (blue), and XGBoost (magenta). The dashed diagonal line represents random-chance performance (AUC = 0.5)."}
-knitr::include_graphics("../datamine_results/bc_meta_pooledROC.png")
+knitr::include_graphics("../res/datamine/bc_meta_pooledROC.png")
 ```
 
 ```{r}
@@ -352,7 +375,7 @@ knitr::kable(ft, format = "html", digits = 3, caption = "Model Performance Metri
 #### Pooled Performance
 
 ```{r, fig.cap="Cross-validated receiver operating characteristic (ROC) curves for four models classifying JMML versus control using metabolomic features. The solid curves show the pooled ROC for Logistic Regression (green), Support Vector Machine (orange), Random Forest (blue), and XGBoost (magenta). The dashed diagonal line represents random-chance performance (AUC = 0.5)."}
-knitr::include_graphics("../datamine_results/bc_bin_meta_pooledROC.png")
+knitr::include_graphics("../res/datamine/bc_bin_meta_pooledROC.png")
 ```
 
 ```{r}
@@ -385,8 +408,17 @@ knitr::kable(final_table_bc_bin_meta, format = "html", digits = 3, caption = "Bo
 ```
 
 # Supplementary Exploratory Feature Analysis
+
+```{r, echo=FALSE, results='asis', warning=FALSE}
+script <- "../02_datamining/dm_sup_features.R"
+
+code <- paste(readLines(script), collapse = "\n")
+cat("```r\n", code, "\n```\n", sep = "")
+```
+
+
 ```{r, echo = FALSE, include = FALSE}
-source("dm_sup_features.R")
+source("../02_datamining/dm_sup_features.R")
 ```
 
 
@@ -397,7 +429,7 @@ We used the limma framework to rank metabolites by their ability to distinguish 
 Our old friend 2-hydroxychrysene is the only one to be significant after multiple test correction for boxcox_bin.
 
 ```{r}
-limma_results_boxcox_bin <- read.csv("../datamine_results/ranked_metabolites_combined.csv")
+limma_results_boxcox_bin <- read.csv("../res/datamine/ranked_metabolites_combined.csv")
 limma_results_boxcox_bin %>% filter(fdr < .05)
 ```
 
@@ -405,6 +437,6 @@ limma_results_boxcox_bin %>% filter(fdr < .05)
 ## Random-forest Importance
 
 ```{r, fig.cap = "Random Forest Out-of-Bag Importance for boxcox_bin Top 30 metabolites ranked by out-of-bag (OOB) permutation importance from a random forest classifier trained on the full dataset. Importance is measured as the mean decrease in classification accuracy when each feature is permuted, averaged over all trees where the corresponding samples were not used for training. Features with higher scores contribute more to the model’s predictive performance."}
-knitr::include_graphics("../datamine_results/combined_rf_oob_importance.png")
+knitr::include_graphics("../res/datamine/combined_rf_oob_importance.png")
 ```
 

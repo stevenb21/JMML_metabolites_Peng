@@ -7,7 +7,7 @@ library(randomForest)
 library(glmnet)
 
 # ==== combined Analysis ====
-full_combined <- readRDS(file = "../datamine_results/full_combined_matrix.rds")
+full_combined <- readRDS(file = "../res/datamine/full_combined_matrix.rds")
 
 # For each platform we have a matrix (full_combined, full_RPNPF) with samples as rows.
 # 
@@ -50,7 +50,7 @@ results_combined <- topTable(fit2_combined, number = Inf, sort.by = "P") %>%
   )
 
 ### ==== Save Ranked Metabolites ====
-write_csv(results_combined, "../datamine_results/ranked_metabolites_combined.csv")
+write_csv(results_combined, "../res/datamine/ranked_metabolites_combined.csv")
 
 
 ## ==== 3.2 Multivariate importance on full dataset ====
@@ -94,7 +94,7 @@ p1 <- ggplot(imp_df, aes(x = reorder(Feature, Importance), y = Importance)) +
   )
 
 ggsave(
-  filename = "../datamine_results/combined_rf_oob_importance.png",
+  filename = "../res/datamine/combined_rf_oob_importance.png",
   plot     = p1,
   width    = 7,
   height   = 5,

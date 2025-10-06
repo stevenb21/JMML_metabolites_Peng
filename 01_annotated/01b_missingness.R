@@ -111,7 +111,7 @@ p_removed_ZHP <- ggplot(ZHP_removed_curve, aes(x = threshold, y = n_removed)) +
 ggsave(
   "../res/annotated/QC/ZHP_missingness_threshold_excluded.png",
   plot = p_removed_ZHP,
-  width = 7,
+  width = 9,
   height = 5,
   dpi = 300
 )
@@ -155,7 +155,7 @@ p_removed_ZHP_ttest <- ggplot(ZHP_removed_curve, aes(x = threshold, y = n_remove
   theme_bw(base_size = 12)
 
 
-ggsave("../res/annotated/QC/missingness_ZHP_ttest.png", plot = p_removed_ZHP_ttest)
+ggsave("../res/annotated/QC/missingness_ZHP_ttest.png", plot = p_removed_ZHP_ttest, width = 9)
 
 
 # Plot
@@ -192,7 +192,7 @@ p_removed_ZHP_fisher <- ggplot(ZHP_removed_curve, aes(x = threshold, y = n_remov
   ) +
   theme_bw(base_size = 12)
 
-ggsave("../res/annotated/QC/missingness_ZHP_fisher.png", plot = p_removed_ZHP_fisher)
+ggsave("../res/annotated/QC/missingness_ZHP_fisher.png", plot = p_removed_ZHP_fisher, width = 9)
 
 
 # ==== RPNPF Missingness =========================================================
@@ -302,7 +302,7 @@ p_removed_RPNPF <- ggplot(RPNPF_removed_curve, aes(x = threshold, y = n_removed)
 ggsave(
   "../res/annotated/QC/RPNPF_missingness_threshold_excluded.png",
   plot = p_removed_RPNPF,
-  width = 7,
+  width = 9,
   height = 5,
   dpi = 300
 )

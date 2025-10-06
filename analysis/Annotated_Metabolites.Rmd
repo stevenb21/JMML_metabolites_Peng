@@ -17,7 +17,7 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(echo = FALSE, dev = "png", dev.args = list(type = "cairo"), dpi = 300, fig.retina = 3, out.width = "100%")
 ```
 
 ```{r, include = FALSE, echo = FALSE}
@@ -44,7 +44,7 @@ library(ggVennDiagram)
 set.seed(123)
 ```
 
-```{r, eval = TRUE, echo = FALSE}
+```{r, eval = TRUE, echo = FALSE, message = FALSE, warning=FALSE, include = FALSE}
 # Run this to populate the results:
 annotated_path <- "../01_annotated"
 source("../01_annotated/main.R")
@@ -260,18 +260,7 @@ This ensures each metabolite is represented only once in downstream analyses, wi
 ```{r, echo = FALSE}
 fitler_summary <- read_xlsx("../res/annotated/filter_summary.xlsx")
 
-datatable(
-  filter_summary %>%
-    mutate(across(where(is.numeric), ~ round(., 2))),
-  options = list(
-    autoWidth = TRUE,
-    scrollX = TRUE,
-    pageLength = 10,           # Show 10 rows per page
-    lengthMenu = c(5, 10, 25, 50, 100),  # Dropdown for # rows
-    order = list(list(1, 'asc'))
-  ),
-  filter = "top"
-)
+kable(filter_summary)
 ```
 
 ---
@@ -419,7 +408,7 @@ datatable(fish_plot_RPNPF_p_clean,
 We apply QRLIC imputation (Quantile Regression Imputation of Left-Censored data) on the metabolites with less than 20% missingness in the combined JMML and Control groups.
 
 ```{r, echo=FALSE, results='asis', warning=FALSE}
-script <- "../01_annotated/03_QLIC_imputation.R"
+script <- "../01_annotated/03_QRILC_imputation.R"
 
 code <- paste(readLines(script), collapse = "\n")
 cat("```r\n", code, "\n```\n", sep = "")
@@ -460,6 +449,7 @@ knitr::include_graphics("../res/annotated/QC/PCA_boxcox_before_imputation_RPNPF.
 ```
 
 ---
+
 ```{r, echo = FALSE}
 knitr::include_graphics("../res/annotated/QC/PCA_boxcox_after_imputation_RPNPF.png")
 ```
@@ -472,6 +462,10 @@ knitr::include_graphics("../res/annotated/QC/PCA_boxcox_after_imputation_RPNPF.p
 ## Two-Sample T-Tests on Imputed M1 Features
 
 After imputation and a Box-Cox transformation, we apply a two-sided t-test between JMML and Control for each metabolite in the 20%< missingness cohort.
+
+```{r, echo = FALSE}
+knitr::include_graphics("../res/annotated/QC/missingness_ZHP_ttest.png")
+```
 
 ```{r, echo=FALSE, results='asis', warning=FALSE}
 script <- "../01_annotated/04a_results_viz.R"
@@ -502,14 +496,6 @@ datatable(ttest_results_Combined_RPNPF_clean,
           options = list(pageLength = 10, scrollX = TRUE),
           filter = "top") 
 ```
-
----
-
-
-```{r, echo = FALSE}
-knitr::include_graphics("../res/annotated/QC/missingness_ZHP_ttest.png")
-```
-
 
 
 ---
@@ -597,14 +583,14 @@ This helps ensure that our list of significant findings is not dominated by rand
 
 
 ```{r, echo = FALSE}
-print(fish_p_ZHP_fdr)
+knitr::include_graphics("../res/annotated/ZHP_ttest_volcano_pval.png")
 ```
 
 ---
 
 
 ```{r, echo = FALSE}
-print(ZHP_ttest_volcano_FDR)
+knitr::include_graphics("../res/annotated/ZHP_ttest_volcano_FDR.png")
 ```
 
 
@@ -612,14 +598,14 @@ print(ZHP_ttest_volcano_FDR)
 
 
 ```{r, echo = FALSE}
-print(fish_p_RPNPF_fdr)
+knitr::include_graphics( "../res/annotated/fisher_volcano_RPNPF_FDR.png")
 ```
 
 ---
 
 
 ```{r, echo = FALSE}
-print(RPNPF_ttest_volcano_FDR)
+knitr::include_graphics("../res/annotated/RPNPF_ttest_volcano_FDR.png")
 ```
 
 
@@ -628,13 +614,13 @@ print(RPNPF_ttest_volcano_FDR)
 
 
 ```{r, echo = FALSE}
-print(p_violin_ZHP)
+knitr::include_graphics("../res/annotated/ZHP_top5_ttest.png")
 ```
 
 ---
 
 ```{r, echo = FALSE}
-print(p_violin_RPNPF)
+knitr::include_graphics( "../res/annotated/RPNPF_top5_ttest.png")
 ```
 
 ##  Table of significant hits (FDR < .05)
@@ -651,14 +637,14 @@ datatable(final_res_clean_fdr,
 ---
 
 ```{r, echo = FALSE}
-print(ttest_sig)
+knitr::include_graphics("../res/annotated/ttest_violin_2-hydroxychrysene.png")
 ```
 
 --- 
 
 
-```{r, warning=FALSE}
-print(fish_res_violin_ZHP)
+```{r, echo=FALSE}
+knitr::include_graphics("../res/annotated/ZHP_top4violin_fish_res.png")
 ```
 
 
@@ -698,8 +684,7 @@ After plugging in the above compounds into MetaboAnalyst (https://dev.metaboanal
 
 ---
 
-```{r, echo = FALSE, include = FALSE}
-#source("pathway.R")
+```{r, echo = FALSE, include = FALSE, warning=FALSE, message = FALSE}
 pathway <- read_csv("../res/annotated/pathway_results.csv")
 
 colnames(pathway)[1] <- "Compound Name"
@@ -717,7 +702,10 @@ datatable(pathway ,
 
 #  Sex Analysis
 
-
+```{r, include = FALSE, echo = FALSE}
+source("../01_annotated/05a_Sex_analysis.R")
+source("../01_annotated/05b_Sex_analysis_viz.R")
+```
 
 ##  Overview
 
@@ -757,10 +745,7 @@ print(p_violin_ZHP_Combined)
 
 ###  Combined Sex Difference Results Table (ZHP): 
 
-```{r, include = FALSE, echo = FALSE}
-source("../01_annotated/05a_Sex_analysis.R")
-source("../01_annotated/05b_Sex_analysis_viz.R")
-```
+
 
 
 ```{r, echo = FALSE}
