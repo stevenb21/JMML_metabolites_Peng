@@ -4,10 +4,10 @@ This repo is a **research analysis workflow (not a packaged library)** for bioma
 
 ![Workflow overview](Workflow.png)
 
-**Poster:** [JMML_poster_StevenBrooks_2025.pdf](JMML_poster_StevenBrooks_2025.pdf) :contentReference[oaicite:1]{index=1}
+**Poster:** [JMML_poster_StevenBrooks_2025.pdf](JMML_poster_StevenBrooks_2025.pdf) 
 
 ## What’s inside
-- `01_annotated/` — QC + statistical testing on annotated metabolites (`main.R` runs the numbered pipeline). :contentReference[oaicite:2]{index=2}
+- `01_annotated/` — QC + statistical testing on annotated metabolites (`main.R` runs the numbered pipeline). 
 - `02_datamining/` — feature engineering + classification experiments (JMML vs control)
 - `analysis/` — `Annotated_Metabolites.Rmd` and `Data_mining.Rmd` reports
 
