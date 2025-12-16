@@ -1,13 +1,19 @@
+# JMML Newborn DBS Metabolomics (Research Workflow)
 
-[![Workflow](Workflow.png)](JMML_poster_StevenBrooks_2025.pdf)
+This repo is a **research analysis workflow (not a packaged library)** for biomarker discovery and classification modeling using **untargeted LC–MS metabolomics** from **newborn dried blood spots (DBS)**. Dataset: **58 JMML cases + 58 controls** with two acquisition modes (**RPNPF** and **ZHP**). :contentReference[oaicite:0]{index=0}
 
-Check out the poster:
+![Workflow overview](Workflow.png)
 
-[Poster (PDF)](JMML_poster_StevenBrooks_2025.pdf)
----
+**Poster:** [JMML_poster_StevenBrooks_2025.pdf](JMML_poster_StevenBrooks_2025.pdf) :contentReference[oaicite:1]{index=1}
 
-We have two sections:
+## What’s inside
+- `01_annotated/` — QC + statistical testing on annotated metabolites (`main.R` runs the numbered pipeline). :contentReference[oaicite:2]{index=2}
+- `02_datamining/` — feature engineering + classification experiments (JMML vs control)
+- `analysis/` — `Annotated_Metabolites.Rmd` and `Data_mining.Rmd` reports
 
-1) Traditional biomarker detection (t.test between cases and controls). 
-
-2) Datamining on the whole Guthrie card - imagine we are willing to mass-spec every newborn's blood drop. How well can we detect JMML?
+## How to run
+Run the pipeline:
+- source("main.R")
+- Knit: `analysis/Annotated_Metabolites.Rmd` and `analysis/Data_mining.Rmd`
+  
+Raw data are not included in this public repo; results/intermediates are generated locally.
