@@ -1,6 +1,6 @@
 # JMML Newborn DBS Metabolomics (Research Workflow)
 
-This repo is a **research analysis workflow (not a packaged library)** for biomarker discovery and classification modeling using **untargeted LC–MS metabolomics** from **newborn dried blood spots (DBS)**. Dataset: **58 JMML cases + 58 controls** with two acquisition modes (**RPNPF** and **ZHP**). :contentReference[oaicite:0]{index=0}
+This repo is a **research analysis workflow (not a packaged library)** for biomarker discovery and classification modeling using **untargeted LC–MS metabolomics** from **newborn dried blood spots (DBS)**. Dataset: **58 JMML cases + 58 controls** with two acquisition modes (**RPNPF** and **ZHP**).
 
 ![Workflow overview](Workflow.png)
 
